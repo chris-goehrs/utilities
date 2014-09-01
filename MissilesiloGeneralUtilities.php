@@ -1,5 +1,10 @@
 <?php
 
+namespace Missilesilo\MissilesiloGeneralUtilities;
+
+//Include the special windows hack
+require_once('SpecialWindowsHack.php.inc');
+
 define('MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_ONLY', 'alpha');
 define('MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC', 'alphanum');
 define('MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC_SPECIAL', 'alphanumspec');
@@ -1313,55 +1318,3 @@ class MissilesiloGeneralUtilities
 	 * ===========================================================================
 	 */
 }
-
-final class MissilesiloMySQLCredentials
-{
-	private $host;
-	private $user;
-	private $pass;
-	private $db;
-	
-	public function __construct($host, $user, $pass, $db)
-	{
-		$this->host = $host;
-		$this->user = $user;
-		$this->pass = $pass;
-		$this->db = $db;
-	}
-	
-	public function getHost()
-	{
-		return $this->host;
-	}
-	
-	public function getUser()
-	{
-		return $this->user;
-	}
-	
-	public function getPass()
-	{
-		return $this->pass;
-	}
-	
-	public function getDB()
-	{
-		return $this->db;
-	}
-
-}
-
-//WINDOWS HACK
-if(!function_exists('money_format')){
-	/**
-	 * 
-	 * @param string $format - ignored in windows
-	 * @param number $number - the number to be formatted
-	 */
-	function money_format($format, $number)
-	{
-		$locale = localeconv();
-		return number_format($number, 2, $locale['decimal_point'], $locale['thousands_sep']);
-	}
-}
-	
