@@ -18,17 +18,6 @@ define('MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__LAST', 2);
 define('MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_FIRST', 3);
 define('MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_LAST', 4);
 
-/*
- * A file for general utilities.
- * 
- * Classes:
- *      * MissilesiloGeneralUtilities
- *      * MissilesiloMySQLCredentials - used to define custom db credentials
- * 
- * Global Functions:
- *      * money_format (windows only)
- */
-
 /**
  * Class Utilities
  * @package Missilesilo\Utilities\App
@@ -216,6 +205,8 @@ class Utilities
 	 */
 	public function select_all_distinct_by($table, $field, array $where = [], $orderby = null, $asc_desc = 'ASC')
 	{
+        $table = $this->config->table($table);
+
 		//Clean the questionable fields
 		if($this->field_name_is_valid($field) === false) return null;
 		if($this->field_name_is_valid($table) === false) return null;
@@ -240,6 +231,8 @@ class Utilities
 	 */
 	public function select_one_by($table, $field, $value, $orderby = null, $asc_desc = 'ASC')
 	{
+        $table = $this->config->table($table);
+
 		//Clean the questionable fields
 		if($this->field_name_is_valid($field) === false) return null;
 		if($this->field_name_is_valid($table) === false) return null;
@@ -265,6 +258,8 @@ class Utilities
 	 */
 	public function select_one_value_by($table, $field, array $where = [], $orderby = null, $asc_desc = 'ASC')
 	{
+        $table = $this->config->table($table);
+
 		if($this->field_name_is_valid($field) === false) return null;
 		if($this->field_name_is_valid($table) === false) return null;
 		$ordertext = $this->build_order($orderby, $asc_desc);
@@ -288,6 +283,8 @@ class Utilities
 	 */
 	public function select_all_by($table, $field, $value, $orderby = null, $asc_desc = 'ASC')
 	{
+        $table = $this->config->table($table);
+
 		//Clean the questionable fields
 		if($this->field_name_is_valid($field) === false) return null;
 		if($this->field_name_is_valid($table) === false) return null;
@@ -310,6 +307,8 @@ class Utilities
 	 */
 	public function select_all_order($table, $orderby, $asc_desc = 'ASC')
 	{
+        $table = $this->config->table($table);
+
 		if($this->field_name_is_valid($table) === false) return null;
 		if($this->field_name_is_valid($orderby) === false) return null;
 		if($asc_desc !== 'ASC' && $asc_desc !== 'DESC') return null;
@@ -329,6 +328,8 @@ class Utilities
 	 */
 	public function count_by($table, $field, $value)
 	{
+        $table = $this->config->table($table);
+
 		if($this->field_name_is_valid($field) === false) return -1;
 		if($this->field_name_is_valid($table) === false) return -1;
 		
@@ -339,6 +340,8 @@ class Utilities
 	
 	public function count_by_multi($table, array $where = [], $orderby = null, $asc_desc = 'ASC')
 	{
+        $table = $this->config->table($table);
+
 		//Clean the questionable fields
 		if($this->field_name_is_valid($table) === false) return null;
 		$ordertext = $this->build_order($orderby, $asc_desc);
@@ -358,6 +361,7 @@ class Utilities
 	 */
 	public function insert($table, array $fields)
 	{
+        $table = $this->config->table($table);
 		if($this->field_name_is_valid($table) === false) return false;
 		
 		//Build column/value lists
@@ -416,6 +420,7 @@ class Utilities
 	
 	public function update_by_multi($table, array $where, array $fields)
 	{
+        $table = $this->config->table($table);
 		if($this->field_name_is_valid($table) === false) return false;
 		if(sizeof($fields) < 1) return false;
 		
@@ -470,6 +475,7 @@ class Utilities
 	 */
 	public function update($table, $id_field, $id_value, array $fields)
 	{
+        $table = $this->config->table($table);
 		if($this->field_name_is_valid($id_field) === false) return false;
 		if($this->field_name_is_valid($table) === false) return false;
 		if(sizeof($fields) < 1) return false;
@@ -517,6 +523,7 @@ class Utilities
 	 */
 	public function delete($table, $id_field, $id_value)
 	{
+        $table = $this->config->table($table);
 		if($this->field_name_is_valid($table) === false) return false;
 		if($this->field_name_is_valid($id_field) === false) return false;
 		
@@ -535,6 +542,7 @@ class Utilities
 	 */
 	public function delete2($table, $id_field1, $id_value1, $id_field2, $id_value2)
 	{
+        $table = $this->config->table($table);
 		if($this->field_name_is_valid($table) === false) return false;
 		if($this->field_name_is_valid($id_field1) === false) return false;
 		if($this->field_name_is_valid($id_field2) === false) return false;
@@ -550,6 +558,7 @@ class Utilities
 	 */
 	public function drop_table($table)
 	{
+        $table = $this->config->table($table);
 		if($this->field_name_is_valid($table) === false) return false;
 		$query = "DROP TABLE IF EXISTS `$table`";
 		return $this->run_raw_query_and_return_query_status($query);
