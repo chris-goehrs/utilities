@@ -14,6 +14,7 @@ namespace Missilesilo\Utilities\Config;
  */
 final class WordpressCustomConfig extends AbstractCustomConfig
 {
+    private $wp_db_prefix = '';
 
     public function __construct($wp_db_prefix = 'wp_')
     {
@@ -21,6 +22,16 @@ final class WordpressCustomConfig extends AbstractCustomConfig
         if(defined('DB_NAME')) 		$this->name = DB_NAME;
         if(defined('DB_USER')) 		$this->user = DB_USER;
         if(defined('DB_PASSWORD')) 	$this->pass = DB_PASSWORD;
-                                    $this->wp_db_prefix = $wp_db_prefix;
+
+        $this->wp_db_prefix = $wp_db_prefix;
     }
-} 
+
+    /**
+     * @param $table
+     * @return mixed|string
+     */
+    public function table($table)
+    {
+        return "{$this->wp_db_prefix}$table";
+    }
+}

@@ -8,7 +8,10 @@
 
 namespace Missilesilo\Utilities\Exceptions;
 
-
+/**
+ * Class NotAnArrayException
+ * @package Missilesilo\Utilities\Exceptions
+ */
 class NotAnArrayException extends \Exception
 {
 

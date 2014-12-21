@@ -8,8 +8,11 @@
 
 namespace Missilesilo\Utilities\Config;
 
-
-class FullCustomConfig extends AbstractCustomConfig
+/**
+ * Class FullCustomConfig
+ * @package Missilesilo\Utilities\Config
+ */
+class FullCustomConfig extends DefaultCustomConfig
 {
     public function __construct($host, $user, $pass, $db)
     {

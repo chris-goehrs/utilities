@@ -2,6 +2,10 @@
 
 namespace Missilesilo\Utilities\Config;
 
+/**
+ * Class AbstractCustomConfig
+ * @package Missilesilo\Utilities\Config
+ */
 abstract class AbstractCustomConfig
 {
     //Database-Related ==================================================
@@ -17,9 +21,6 @@ abstract class AbstractCustomConfig
 
     //Other Settings
     public $db_throw_exceptions = true;
-
-    //Wordpress-Related =================================================
-    public $wp_db_prefix = 'wp_';
 
     //Log-Related =======================================================
     public $log_location = './general_utilities.log';
@@ -38,5 +39,12 @@ abstract class AbstractCustomConfig
     {
         if($this->db_use_query_cache) $this->db_cache_text = 'SQL_CACHE ';
     }
+
+    /**
+     * Processes the table name in some form or another (like wordpress adding wp_) to the beginning
+     * @param $table
+     * @return mixed
+     */
+    public abstract function table($table);
 
 }

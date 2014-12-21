@@ -10,8 +10,14 @@
 
 namespace Missilesilo\Utilities\Config;
 
-
+/**
+ * Class DefaultCustomConfig
+ * @package Missilesilo\Utilities\Config
+ */
 class DefaultCustomConfig extends AbstractCustomConfig
 {
-
+    public function table($table)
+    {
+        return $table;
+    }
 } 
