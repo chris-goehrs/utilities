@@ -14,6 +14,6 @@ require_once "Config/WordpressCustomConfig.php";
 require_once "Exceptions/DatabaseCredentialValidationException.php";
 require_once "Exceptions/NotAnArrayException.php";
 
-require_once "App/utilities.php";
+require_once "App/Utilities.php";
 
 require_once "SpecialWindowsHack.php.inc";
