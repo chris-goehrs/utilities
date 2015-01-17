@@ -14,15 +14,6 @@ require_once "Config/WordpressCustomConfig.php";
 require_once "Exceptions/DatabaseCredentialValidationException.php";
 require_once "Exceptions/NotAnArrayException.php";
 
-require_once "App/Traits/TraitFlavor.php";
-require_once "App/Traits/TraitLog.php";
-require_once "App/Traits/TraitMySQL.php";
-require_once "App/Traits/TraitRequest.php";
-require_once "App/Traits/TraitSpecial.php";
-require_once "App/Traits/TraitString.php";
-require_once "App/Traits/TraitURL.php";
-require_once "App/Traits/TraitValidation.php";
-
 require_once "App/Utilities.php";
 
 require_once "SpecialWindowsHack.php.inc";
