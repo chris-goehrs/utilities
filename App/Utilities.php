@@ -251,6 +251,20 @@ class Utilities
 		return $statement->fetchAll(\PDO::FETCH_COLUMN, 0);
 	}
 
+	public function select_all($table, array $where = [], $orderby = null, $asc_desc = 'ASC', $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class = null)
+	{
+		$table = $this->config->table($table);
+
+		if($this->field_name_is_valid($table) === false) return null;
+		$ordertext = $this->build_order($orderby, $asc_desc);
+		$wherear = $this->build_where($where);
+		if($ordertext === null || $wherear === null) return null;
+
+		$query = "SELECT * FROM `$table` {$wherear['query']}$ordertext";
+
+		return $this->run_raw_query_and_return_all_records($query, $wherear['array'], $pdo_fetch_style, $pdo_fetch_class);
+	}
+
 	/**
 	 * Retrieves the first row in the table with $field matching $value
 	 * @param string $table
@@ -1158,7 +1172,7 @@ class Utilities
 	 */
 	public function validate_credit_card_number($number)
 	{
-		if(strlen($number) == 0) return false;
+		if(strlen($number) < 7) return false;
 
 		// Strip any non-digits (useful for credit card numbers with spaces and hyphens)
 		$number=preg_replace('/\D/', '', $number);
@@ -1200,6 +1214,7 @@ class Utilities
 	{
 		//Grab the expiration time
 		$exp_ts = mktime(0, 0, 0, ($month + 1), 1, $year);
+		$exp_ts = strtotime("+1 month", $exp_ts);   //Validates against the first second of the month following the expiration
 
 		//Grab the current time
 		$cur_ts = time();
@@ -1212,13 +1227,58 @@ class Utilities
 	}
 
 	/**
+	 * Validates a credit card CVV.<br/>
+	 * The CVV is valid if the credit card is AmEx and the cvv is 4 digits OR<br/>
+	 *      if the credit card is Visa, MC, or Discover and the cvv is 3 digits
+	 *
+	 * NOTE: Thanks to RichardH over at authorize.net
+	 * http://community.developer.authorize.net/t5/The-Authorize-Net-Developer-Blog/Validating-Credit-Card-Information-Part-3-of-3-CVV-Numbers/ba-p/7657
+	 *
+	 * @param $card_number - The credit card number for the CVV
+	 * @param $cvv - The CVV to be validated
+	 * @return bool
+	 */
+	public function validate_credit_card_cvv($card_number, $cvv)
+	{
+		$first_number = (int) substr($card_number, 0, 1);
+		if($first_number === 3){
+			if(!preg_match("/^\d{4}$/", $cvv)) {
+				// The credit card is an American Express card but does not have a four digit CVV code
+				return false;
+			}
+		}elseif(!preg_match("/^\d{3}$/", $cvv)) {
+			// The credit card is a Visa, MasterCard, or Discover Card card but does not have a three digit CVV code
+			return false;
+		}
+		return true;
+	}
+
+	/**
 	 * Validates a phone number
 	 *
-	 * @param string $number
+	 * @param string $number - The phone number to validate
+	 * @param boolean $advanced_validation - Checks the format of the number
 	 * @return boolean true if valid/false if not
 	 */
-	public function validate_phone_number($number)
+	public function validate_phone_number($number, $advanced_validation = false)
 	{
+		$number = str_replace('-', '', $number);
+		$number = str_replace('+', '', $number);
+		$number = str_replace('(', '', $number);
+		$number = str_replace(')', '', $number);
+		$number = str_replace('.', '', $number);
+		$number = str_replace(',', '', $number);
+		$number = str_replace(' ', '', $number);
+		$number = trim($number);
+
+		if(strlen($number) < 3){
+			return false;
+		}
+
+		if($advanced_validation == false){
+			return true;
+		}
+
 		$regex = "/^((\+|00)\d{1,3})?\d+$/";
 		return (preg_match( $regex, $number )?true:false);
 	}
@@ -1250,6 +1310,47 @@ class Utilities
 			//No?  Well then I guess everything is fine
 			return true;
 		}
+	}
+
+	public function validate_address_minimal_set($street, $city, $state, $postal, $country = null)
+	{
+		return  $this->validate_address_street($street) &&
+		$this->validate_address_city_state($city) &&
+		$this->validate_address_city_state($state) &&
+		$this->validate_address_postal($postal, $country);
+	}
+
+	public function validate_address_street($street)
+	{
+		if(strlen($street) < 2) return false;
+		if(strlen($street) > 50) return false;
+		return true;
+	}
+
+	public function validate_address_city_state($citystate)
+	{
+		if(strlen($citystate) < 2) return false;
+		if(strlen($citystate) > 30) return false;
+		return true;
+	}
+
+	public function validate_address_postal($postal, $country = null)
+	{
+		if(strlen($postal) < 1) return false;
+		if(strlen($postal) > 50) return false;
+
+		if(strlen($country) == 2){
+			//Do a more specific check
+			$country = $this->select_one_by('country_list', 'COUNTRY_CODE', $country);
+			if($country != null){
+				//var_dump($country); die;
+				if($country->POSTAL_CODE_REGEX != null){
+					return (preg_match( $country->POSTAL_CODE_REGEX, $postal )?true:false);
+				}
+			}
+		}
+
+		return true;
 	}
 
 	///////////////////////////////////////////////////////////////////////////
@@ -1498,7 +1599,7 @@ class Utilities
 	 * @param $line
 	 * @return int|null
 	 */
-	public function write_to_log($line)
+	public function write_to_log($line = '')
 	{
 		if(!$this->config->allow_write_to_log) return null;
 
@@ -1522,14 +1623,19 @@ class Utilities
 	/**
 	 * Writes $_REQUEST nvp set to log with each key/value set being written as a new line
 	 */
-	function write_request_fields_to_log()
+	public function write_request_fields_to_log()
+	{
+		$this->write_array_to_log($_REQUEST);
+	}
+
+	public function write_array_to_log(array $ar)
 	{
 		//Get the maximum field length
 		$max_length = 0;
-		foreach($_REQUEST as $key=>$value) if(strlen($key) > $max_length) $max_length = strlen($key);
+		foreach($ar as $key=>$value) if(strlen($key) > $max_length) $max_length = strlen($key);
 
 		//Add the fields to the log
-		foreach($_REQUEST as $key=>$value){
+		foreach($ar as $key=>$value){
 			if(is_array($value))
 				$valuep = "array(".sizeof($value).")";
 			else
@@ -1539,5 +1645,6 @@ class Utilities
 			$this->write_to_log("    $key_pad => $valuep");
 		}
 	}
+
 
 }
