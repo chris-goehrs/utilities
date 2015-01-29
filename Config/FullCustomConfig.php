@@ -6,7 +6,7 @@
  * Time: 8:09 PM
  */
 
-namespace Missilesilo\Utilities\Config;
+namespace lillockey\Utilities\Config;
 
 /**
  * Class FullCustomConfig

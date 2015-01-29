@@ -6,7 +6,7 @@
  * Time: 8:45 PM
  */
 
-namespace Missilesilo\Utilities\Exceptions;
+namespace lillockey\Utilities\Exceptions;
 
 /**
  * Class NotAnArrayException

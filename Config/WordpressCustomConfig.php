@@ -6,7 +6,7 @@
  * Time: 8:00 PM
  */
 
-namespace Missilesilo\Utilities\Config;
+namespace lillockey\Utilities\Config;
 
 /**
  * Class WordpressCustomConfig

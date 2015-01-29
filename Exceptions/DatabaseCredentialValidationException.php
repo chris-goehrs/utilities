@@ -6,7 +6,7 @@
  * Time: 8:32 PM
  */
 
-namespace Missilesilo\Utilities\Exceptions;
+namespace lillockey\Utilities\Exceptions;
 
 /**
  * Class DatabaseCredentialValidationException

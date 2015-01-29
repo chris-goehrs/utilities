@@ -1,34 +1,34 @@
 <?php
 
-namespace Missilesilo\Utilities\App;
+namespace lillockey\Utilities\App;
 
-use Missilesilo\Utilities\Config\AbstractCustomConfig;
-use Missilesilo\Utilities\Exceptions\DatabaseCredentialValidationException;
-use Missilesilo\Utilities\Exceptions\NotAnArrayException;
+use lillockey\Utilities\Config\AbstractCustomConfig;
+use lillockey\Utilities\Exceptions\DatabaseCredentialValidationException;
+use lillockey\Utilities\Exceptions\NotAnArrayException;
 
 //================================================
 // Section * - Some basic constants
 //================================================
 
-define('MISSILESILO_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH', false);
-define('MISSILESILO_GENERAL_UTILITIES__DEFAULT_EXECUTE_SESSION_START_ON_SESSION_GET', true);
+define('LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH', false);
+define('LILLOCKEY_GENERAL_UTILITIES__DEFAULT_EXECUTE_SESSION_START_ON_SESSION_GET', true);
 
 //================================================
 // Section 3 - String Manipulation Constants
 //================================================
 
-define('MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__FIRST', 1);
-define('MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__LAST', 2);
-define('MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_FIRST', 3);
-define('MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_LAST', 4);
+define('LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__FIRST', 1);
+define('LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__LAST', 2);
+define('LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_FIRST', 3);
+define('LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_LAST', 4);
 
-define('MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_ONLY', 'alpha');
-define('MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC', 'alphanum');
-define('MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC_SPECIAL', 'alphanumspec');
+define('LILLOCKEY_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_ONLY', 'alpha');
+define('LILLOCKEY_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC', 'alphanum');
+define('LILLOCKEY_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC_SPECIAL', 'alphanumspec');
 
 /**
  * Class Utilities
- * @package Missilesilo\Utilities\App
+ * @package lillockey\Utilities\App
  */
 class Utilities
 {
@@ -688,12 +688,12 @@ class Utilities
 	 * @since 5/31/2014
 	 * @param integer $length
 	 * @param string $type - can be any of the following values<ul>
-	 * <li>MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_ONLY</li>
-	 * <li>MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC</li>
-	 * <li>MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC_SPECIAL</li></ul>
+	 * <li>LILLOCKEY_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_ONLY</li>
+	 * <li>LILLOCKEY_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC</li>
+	 * <li>LILLOCKEY_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC_SPECIAL</li></ul>
 	 * @return NULL|string null if invalid type or length isn't a valid integer / otherwise random string
 	 */
-	public function random_string($length, $type=MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC_SPECIAL){
+	public function random_string($length, $type=LILLOCKEY_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC_SPECIAL){
 		$cur = 0;
 		$str = '';
 
@@ -701,11 +701,11 @@ class Utilities
 
 		//Set up the character set
 		$chars = null;
-		if($type == MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_ONLY)
+		if($type == LILLOCKEY_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_ONLY)
 			$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-		elseif($type == MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC)
+		elseif($type == LILLOCKEY_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC)
 			$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-		elseif($type == MISSILESILO_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC_SPECIAL)
+		elseif($type == LILLOCKEY_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC_SPECIAL)
 			$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+-{}[]?/>.<,`~|\\';
 		if($chars == null) return null;
 
@@ -767,13 +767,13 @@ class Utilities
 	 * 		for "all_but" mask types, this represents what remains visible
 	 * 		fir "first"/"last" mask types, this represents the amount that is being covered up
 	 * @param int $mask_type - must be one of the following:
-	 * 	<ul><li>MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__FIRST</li>
-	 * 		<li>MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__LAST</li>
-	 * 		<li>MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_FIRST</li>
-	 * 		<li>MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_LAST</li></ul>
+	 * 	<ul><li>LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__FIRST</li>
+	 * 		<li>LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__LAST</li>
+	 * 		<li>LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_FIRST</li>
+	 * 		<li>LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_LAST</li></ul>
 	 * @return string - The masked string
 	 */
-	public function mask_string($subject, $mask = '*', $mask_length_value = 4, $mask_type = MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_LAST)
+	public function mask_string($subject, $mask = '*', $mask_length_value = 4, $mask_type = LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_LAST)
 	{
 		if(!is_int($mask_length_value)) return $subject;
 		if(!$this->is_str($subject)) return $subject;
@@ -784,25 +784,25 @@ class Utilities
 		$slen = strlen($subject);
 
 		switch($mask_type){
-			case MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__FIRST:
+			case LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__FIRST:
 				$remaining_visible = $slen - $mask_length_value;
 				if($remaining_visible < 1) return str_pad('', $slen, $mask);
 
 				return str_pad('', $mask_length_value, $mask).$this->str_right($subject, $remaining_visible);
 				break;
-			case MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__LAST:
+			case LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__LAST:
 				$remaining_visible = $slen - $mask_length_value;
 				if($remaining_visible < 1) return str_pad('', $slen, $mask);
 
 				return $this->str_left($subject, $remaining_visible).str_pad('', $mask_length_value, $mask);
 				break;
-			case MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_FIRST:
+			case LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_FIRST:
 				$mask_length = $slen - $mask_length_value;
 				if($mask_length < 1) return $subject;
 
 				return $this->str_left($subject, $mask_length_value).str_pad('', $mask_length, $mask);
 				break;
-			case MISSILESILO_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_LAST:
+			case LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__ALL_BUT_LAST:
 				$mask_length = $slen - $mask_length_value;
 				if($mask_length < 1) return $subject;
 
@@ -987,7 +987,7 @@ class Utilities
 	 * @throws NotAnArrayException
 	 * @return string - the value | null
 	 */
-	public function server($keys, $throw_exception_when_cant_be_searched = MISSILESILO_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
+	public function server($keys, $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
 	{
 		if(!is_array($_SERVER)){
 			if($throw_exception_when_cant_be_searched) throw new NotAnArrayException('$_SERVER is not an array');
@@ -1014,7 +1014,7 @@ class Utilities
 	 * @throws NotAnArrayException
 	 * @return string - the value | null
 	 */
-	public function get($keys, $throw_exception_when_cant_be_searched = MISSILESILO_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
+	public function get($keys, $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
 	{
 		if(!is_array($_GET)){
 			if($throw_exception_when_cant_be_searched) throw new NotAnArrayException('$_GET is not an array');
@@ -1041,7 +1041,7 @@ class Utilities
 	 * @throws NotAnArrayException
 	 * @return string - the value | null
 	 */
-	public function post($keys, $throw_exception_when_cant_be_searched = MISSILESILO_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
+	public function post($keys, $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
 	{
 		if(!is_array($_POST)){
 			if($throw_exception_when_cant_be_searched) throw new NotAnArrayException('$_POST is not an array');
@@ -1072,8 +1072,8 @@ class Utilities
 	 */
 	public function session(
 		$keys,
-		$run_session_start = MISSILESILO_GENERAL_UTILITIES__DEFAULT_EXECUTE_SESSION_START_ON_SESSION_GET,
-		$throw_exception_when_cant_be_searched = MISSILESILO_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
+		$run_session_start = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_EXECUTE_SESSION_START_ON_SESSION_GET,
+		$throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
 	{
 		if($run_session_start && !isset($_SESSION))
 			session_start();
@@ -1103,7 +1103,7 @@ class Utilities
 	 * @throws \Exception
 	 * @return unknown - the value | null
 	 */
-	public function cookie($keys, $throw_exception_when_cant_be_searched = MISSILESILO_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
+	public function cookie($keys, $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
 	{
 		if(!is_array($_COOKIE)){
 			if($throw_exception_when_cant_be_searched) throw new \Exception('$_COOKIE is not an array');

@@ -8,7 +8,7 @@
  * Use this class when no database interactivity is needed or you intend to set each variable manually.
  */
 
-namespace Missilesilo\Utilities\Config;
+namespace lillockey\Utilities\Config;
 
 /**
  * Class DefaultCustomConfig

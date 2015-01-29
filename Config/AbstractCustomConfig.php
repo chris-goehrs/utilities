@@ -1,6 +1,6 @@
 <?php
 
-namespace Missilesilo\Utilities\Config;
+namespace lillockey\Utilities\Config;
 
 /**
  * Class AbstractCustomConfig
