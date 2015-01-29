@@ -1649,4 +1649,4 @@ class Utilities
 
 }
 
-require 'SpecialWindowsHack.php.inc';
+require __DIR__ . '/SpecialWindowsHack.php.inc';
