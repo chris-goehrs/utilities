@@ -1645,7 +1645,4 @@ class Utilities
 			$this->write_to_log("    $key_pad => $valuep");
 		}
 	}
-
-
-}
-
+}   //END: Class Utilities
