@@ -1650,3 +1650,7 @@ class Utilities
 }
 
 require __DIR__ . '/SpecialWindowsHack.php.inc';
+
+//Some space at the end
+// ... because reasons
+
