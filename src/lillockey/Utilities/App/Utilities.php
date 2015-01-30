@@ -1544,7 +1544,7 @@ class Utilities
 	{
 		?>
 		<option value="<?php echo htmlentities($country_code);?>"<?php echo ($selected === true ? ' selected="selected"' : '')?>><?php echo htmlentities($country_name);?></option>
-	<?
+		<?php
 	}
 
 	///////////////////////////////////////////////////////////////////////////
