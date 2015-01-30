@@ -1240,13 +1240,13 @@ class Utilities
 	 */
 	public function validate_credit_card_cvv($card_number, $cvv)
 	{
-		$first_number = (int) substr($card_number, 0, 1);
+		$first_number = (int) substr(trim($card_number), 0, 1);
 		if($first_number === 3){
-			if(!preg_match("/^\d{4}$/", $cvv)) {
+			if(strlen($cvv) !== 4) {
 				// The credit card is an American Express card but does not have a four digit CVV code
 				return false;
 			}
-		}elseif(!preg_match("/^\d{3}$/", $cvv)) {
+		}elseif(strlen($cvv) !== 3) {
 			// The credit card is a Visa, MasterCard, or Discover Card card but does not have a three digit CVV code
 			return false;
 		}
