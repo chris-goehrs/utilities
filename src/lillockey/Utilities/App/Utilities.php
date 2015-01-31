@@ -1034,6 +1034,28 @@ class Utilities
 		}
 	}
 
+	public function request($keys, $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
+	{
+		if(!is_array($_REQUEST)){
+			if($throw_exception_when_cant_be_searched) throw new NotAnArrayException('$_GET is not an array');
+			return null;
+		}
+
+		if($this->is_str($keys))
+			return $this->getArrayValue($_REQUEST, [$keys]);
+		else{
+			if(is_array($keys))
+				return $this->getArrayValue($_REQUEST, $keys);
+			else{
+				if($throw_exception_when_cant_be_searched)
+					throw new NotAnArrayException('$keys is neither a string nor an array');
+				return null;
+			}
+		}
+	}
+
+
+
 	/**
 	 * Searches the $_POST variable for the keys
 	 * @param array/string/object $keys
@@ -1094,6 +1116,38 @@ class Utilities
 				return null;
 			}
 		}
+	}
+
+	public function session_unset($key,
+          $run_session_start = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_EXECUTE_SESSION_START_ON_SESSION_GET,
+          $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
+	{
+		if($run_session_start && !isset($_SESSION))
+			session_start();
+
+		if(!is_array($_SESSION)){
+			if($throw_exception_when_cant_be_searched) throw new NotAnArrayException('$_SESSION is not an array');
+			return $this;
+		}
+
+		unset($_SESSION[$key]);
+		return $this;
+	}
+
+	public function session_set($key, $value,
+        $run_session_start = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_EXECUTE_SESSION_START_ON_SESSION_GET,
+        $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
+	{
+		if($run_session_start && !isset($_SESSION))
+			session_start();
+
+		if(!is_array($_SESSION)){
+			if($throw_exception_when_cant_be_searched) throw new NotAnArrayException('$_SESSION is not an array');
+			return $this;
+		}
+
+		$_SESSION[$key] = $value;
+		return $this;
 	}
 
 	/**
