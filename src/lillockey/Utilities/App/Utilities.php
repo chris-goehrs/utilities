@@ -75,7 +75,7 @@ class Utilities
 		$dbname=	$this->config->db;
 		$username=	$this->config->user;
 		$passwd=	$this->config->pass;
-		$options=	[\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION];
+		$options=	array(\PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION);
 
 		//Construct and return the new instance
 		return ($passwd == ''
@@ -129,7 +129,7 @@ class Utilities
 			$exception = $e;
 		}
 
-		$results = [
+		$results = array(
 			'query' => $query,
 			'arguments' => $arguments,
 			'db' => $db,
@@ -137,7 +137,7 @@ class Utilities
 			'statement' => $statement,
 			'exception' => $exception,
 			'id' => $db->lastInsertId(),
-		];
+		);
 
 		return $this->log_query($results);
 	}
@@ -189,10 +189,10 @@ class Utilities
 			if($this->field_name_is_valid($wherefield) === false) return null;
 		}
 
-		$return_me = [
+		$return_me = array(
 			'query' => '',
-			'array' => []
-		];
+			'array' => array()
+		);
 
 		//Build the query based on the where array
 		if(sizeof($where) == 0){
@@ -234,7 +234,7 @@ class Utilities
 	 * @param string $asc_desc
 	 * @return NULL|mixed:
 	 */
-	public function select_all_distinct_by($table, $field, array $where = [], $orderby = null, $asc_desc = 'ASC')
+	public function select_all_distinct_by($table, $field, array $where = array(), $orderby = null, $asc_desc = 'ASC')
 	{
 		$table = $this->config->table($table);
 
@@ -251,7 +251,7 @@ class Utilities
 		return $statement->fetchAll(\PDO::FETCH_COLUMN, 0);
 	}
 
-	public function select_all($table, array $where = [], $orderby = null, $asc_desc = 'ASC', $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class = null)
+	public function select_all($table, array $where = array(), $orderby = null, $asc_desc = 'ASC', $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class = null)
 	{
 		$table = $this->config->table($table);
 
@@ -288,7 +288,7 @@ class Utilities
 		$ordertext = ($orderby === null?'':" ORDER BY `$orderby` $asc_desc");
 
 		$query = "SELECT{$this->config->db_cache_text} * FROM `$table` WHERE `$field` = :id LIMIT 1";
-		$statement = $this->run_raw_query_and_return_statement($query, ['id' => $value]);
+		$statement = $this->run_raw_query_and_return_statement($query, array('id' => $value));
 		return $statement->fetch(\PDO::FETCH_OBJ);
 	}
 
@@ -301,7 +301,7 @@ class Utilities
 	 * @param string $asc_desc
 	 * @return NULL|mixed
 	 */
-	public function select_one_value_by($table, $field, array $where = [], $orderby = null, $asc_desc = 'ASC')
+	public function select_one_value_by($table, $field, array $where = array(), $orderby = null, $asc_desc = 'ASC')
 	{
 		$table = $this->config->table($table);
 
@@ -340,7 +340,7 @@ class Utilities
 		$ordertext = ($orderby === null?'':" ORDER BY `$orderby` $asc_desc");
 
 		$query = "SELECT{$this->config->db_cache_text} * FROM `$table` WHERE `$field` = :id$ordertext";
-		return $this->run_raw_query_and_return_all_records($query, ['id' => $value], \PDO::FETCH_OBJ);
+		return $this->run_raw_query_and_return_all_records($query, array('id' => $value), \PDO::FETCH_OBJ);
 	}
 
 	/**
@@ -379,11 +379,11 @@ class Utilities
 		if($this->field_name_is_valid($table) === false) return -1;
 
 		$query = "SELECT{$this->config->db_cache_text} COUNT(*) FROM `$table` WHERE `$field` = :id";
-		$statement = $this->run_raw_query_and_return_statement($query, ['id' => $value]);
+		$statement = $this->run_raw_query_and_return_statement($query, array('id' => $value));
 		return intval($statement->fetchColumn(0));
 	}
 
-	public function count_by_multi($table, array $where = [], $orderby = null, $asc_desc = 'ASC')
+	public function count_by_multi($table, array $where = array(), $orderby = null, $asc_desc = 'ASC')
 	{
 		$table = $this->config->table($table);
 
@@ -413,7 +413,7 @@ class Utilities
 		$columns = "";
 		$values = "";
 		$i = 0;
-		$submitted_values = [];
+		$submitted_values = array();
 		foreach($fields as $column=>$value)
 		{
 			if($this->field_name_is_valid($column) === false) {continue;}
@@ -472,7 +472,7 @@ class Utilities
 		//Prepare the basic variables
 		$query = "UPDATE `$table` SET";		//The basic query string
 		$i = 0;								//Counter for number of fields
-		$submitted_fields = [];				//The fields that have been kept
+		$submitted_fields = array();				//The fields that have been kept
 
 		foreach($fields as $column_name=>$column_value){
 			if($this->field_name_is_valid($column_name) === false) continue;	//Skip it if its a bad column name
@@ -528,7 +528,7 @@ class Utilities
 		//Prepare the basic variables
 		$query = "UPDATE `$table` SET";		//The basic query string
 		$i = 0;								//Counter for number of fields
-		$submitted_fields = [];				//The fields that have been kept
+		$submitted_fields = array();		//The fields that have been kept
 
 		foreach($fields as $column_name=>$column_value){
 			if($this->field_name_is_valid($column_name) === false) continue;	//Skip it if its a bad column name
@@ -573,7 +573,7 @@ class Utilities
 		if($this->field_name_is_valid($id_field) === false) return false;
 
 		$query = "DELETE FROM `$table` WHERE `$id_field`=:id_value";
-		return $this->run_raw_query_and_return_query_status($query, ['id_value' => $id_value]);
+		return $this->run_raw_query_and_return_query_status($query, array('id_value' => $id_value));
 	}
 
 	/**
@@ -593,7 +593,7 @@ class Utilities
 		if($this->field_name_is_valid($id_field2) === false) return false;
 
 		$query = "DELETE FROM `$table` WHERE `$id_field1`=:id_value1 AND `$id_field2`=:id_value2";
-		return $this->run_raw_query_and_return_query_status($query, ['id_value1' => $id_value1, 'id_value2' => $id_value2]);
+		return $this->run_raw_query_and_return_query_status($query, array('id_value1' => $id_value1, 'id_value2' => $id_value2));
 	}
 
 	/**
@@ -860,7 +860,7 @@ class Utilities
 	 */
 	public function base_url($append_to_base = '')
 	{
-		$str = $this->server('REQUEST_SCHEME').'://'.$this->server(['HTTP_HOST', 'SERVER_NAME']).(strlen($append_to_base)?'/'.rawurldecode($append_to_base):'');
+		$str = $this->server('REQUEST_SCHEME').'://'.$this->server(array('HTTP_HOST', 'SERVER_NAME')).(strlen($append_to_base)?'/'.rawurldecode($append_to_base):'');
 		return $str;
 	}
 
@@ -870,7 +870,7 @@ class Utilities
 	 * @param array $subids
 	 * @return bool
 	 */
-	public function redirect_to_url($base_url, $status = 302, array $subids = [])
+	public function redirect_to_url($base_url, $status = 302, array $subids = array())
 	{
 		$sanitized_url = $this->build_and_sanitize_url($base_url, $subids);
 		$header = "Location: $sanitized_url";
@@ -905,7 +905,7 @@ class Utilities
 	 * @param array $subids
 	 * @return string
 	 */
-	public function build_and_sanitize_url($base_url, array $subids = [])
+	public function build_and_sanitize_url($base_url, array $subids = array())
 	{
 		return $this->sanitize_url($base_url.(sizeof($subids)?'?'.http_build_query($subids):''));
 	}
@@ -995,7 +995,7 @@ class Utilities
 		}
 
 		if($this->is_str($keys))
-			return $this->getArrayValue($_SERVER, [$keys]);
+			return $this->getArrayValue($_SERVER, array($keys));
 		else{
 			if(is_array($keys))
 				return $this->getArrayValue($_SERVER, $keys);
@@ -1022,7 +1022,7 @@ class Utilities
 		}
 
 		if($this->is_str($keys))
-			return $this->getArrayValue($_GET, [$keys]);
+			return $this->getArrayValue($_GET, array($keys));
 		else{
 			if(is_array($keys))
 				return $this->getArrayValue($_GET, $keys);
@@ -1042,7 +1042,7 @@ class Utilities
 		}
 
 		if($this->is_str($keys))
-			return $this->getArrayValue($_REQUEST, [$keys]);
+			return $this->getArrayValue($_REQUEST, array($keys));
 		else{
 			if(is_array($keys))
 				return $this->getArrayValue($_REQUEST, $keys);
@@ -1071,7 +1071,7 @@ class Utilities
 		}
 
 		if($this->is_str($keys))
-			return $this->getArrayValue($_POST, [$keys]);
+			return $this->getArrayValue($_POST, array($keys));
 		else{
 			if(is_array($keys))
 				return $this->getArrayValue($_POST, $keys);
@@ -1106,7 +1106,7 @@ class Utilities
 		}
 
 		if($this->is_str($keys))
-			return $this->getArrayValue($_SESSION, [$keys]);
+			return $this->getArrayValue($_SESSION, array($keys));
 		else{
 			if(is_array($keys))
 				return $this->getArrayValue($_SESSION, $keys);
@@ -1165,7 +1165,7 @@ class Utilities
 		}
 
 		if($this->is_str($keys))
-			return $this->getArrayValue($_COOKIE, [$keys]);
+			return $this->getArrayValue($_COOKIE, array($keys));
 		else{
 			if(is_array($keys))
 				return $this->getArrayValue($_COOKIE, $keys);
@@ -1195,7 +1195,7 @@ class Utilities
 	 */
 	public function field_name_is_valid($field)
 	{
-		return filter_var($field, FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => '^[a-zA-Z_][a-zA-Z0-9_]*$^']]);
+		return filter_var($field, FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => '^[a-zA-Z_][a-zA-Z0-9_]*$^')));
 	}
 
 	/**
@@ -1456,7 +1456,7 @@ class Utilities
 	 */
 	public function clean_post_array()
 	{
-		array_walk_recursive($_POST, [$this, 'strip_slashes']);
+		array_walk_recursive($_POST, array($this, 'strip_slashes'));
 	}
 
 	/**
@@ -1464,7 +1464,7 @@ class Utilities
 	 */
 	public function clean_request_array()
 	{
-		array_walk_recursive($_REQUEST, [$this, 'strip_slashes']);
+		array_walk_recursive($_REQUEST, array($this, 'strip_slashes'));
 	}
 
 	/**
@@ -1472,7 +1472,7 @@ class Utilities
 	 */
 	public function clean_get_array()
 	{
-		array_walk_recursive($_GET, [$this, 'strip_slashes']);
+		array_walk_recursive($_GET, array($this, 'strip_slashes'));
 	}
 
 	/**
@@ -1531,11 +1531,11 @@ class Utilities
 	 * @param array $exclude = a list of country codes to exclude from the results
 	 * @return array
 	 */
-	public function get_countries(array $exclude = [])
+	public function get_countries(array $exclude = array())
 	{
 		$query = "SELECT COUNTRY_CODE, COUNTRY_NAME FROM country_list";
 		$excount = 0;
-		$variables = [];
+		$variables = array();
 		$where_and = ' WHERE';
 		foreach($exclude as $ex){
 			$excount++;             //Increment the count (starts at 1)
@@ -1553,7 +1553,7 @@ class Utilities
 		//  key = Country code
 		//  value = Country name
 		$entries = $this->run_raw_query_and_return_all_records($query, empty($variables) ? null : $variables);
-		$countries = [];
+		$countries = array();
 		foreach($entries as $entry){
 			$countries[$entry->COUNTRY_CODE] = $entry->COUNTRY_NAME;
 		}
@@ -1578,7 +1578,7 @@ class Utilities
 		return null;
 	}
 
-	public function echo_countries_options($selected = '', $include_blank = false, array $exclude = [])
+	public function echo_countries_options($selected = '', $include_blank = false, array $exclude = array())
 	{
 		$countries = $this->get_countries($exclude);
 		if($include_blank)
