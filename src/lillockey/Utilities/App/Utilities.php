@@ -84,12 +84,30 @@ class Utilities
 	}
 
 	/**
-	 * Runs a raw SQL query
+	 * Runs a raw query and returns the first column<br/>
+	 * <strong>NOTE:</strong> Good for getting a count of records
+	 * @param       $query - SQL Query
+	 * @param array $arguments - [optional] array containing arguments for the query
+	 * @return string - the first column
+	 */
+	public function run_raw_query_and_return_first_column($query, array $arguments = null)
+	{
+		$statement = $this->run_raw_query_and_return_statement($query, $arguments);
+		return $statement->fetchColumn();
+	}
+
+	/**
+	 * Runs a raw SQL query and returns the first record found
 	 * @param string $query - SQL Query
 	 * @param array $arguments - [optional] array containing arguments for the query
-	 * @param
-	 * @return array - all rows fetched by the query
+	 * @param int $pdo_fetch_style - [optional] pdo fetch style \PDO::FETCH_OBJ by default
+	 * @return array|\stdClass - the record found
 	 */
+	public function run_raw_query_and_return_first_record($query, array $arguments = null, $pdo_fetch_style = \PDO::FETCH_OBJ)
+	{
+		$statement = $this->run_raw_query_and_return_statement($query, $arguments);
+		return $statement->fetch($pdo_fetch_style);
+	}
 
 	/**
 	 * Runs a raw SQL query
@@ -108,6 +126,18 @@ class Utilities
 	 * Runs a raw SQL query
 	 * @param string $query - SQL Query
 	 * @param array $arguments - [optional] array containing arguments for the query
+	 * @return boolean - the results of the ->execute statement
+	 */
+	public function run_raw_query_and_return_query_status($query, array $arguments = null)
+	{
+		$r = $this->execute_query($query, $arguments);
+		return $r['exec'];
+	}
+
+	/**
+	 * Runs a raw SQL query
+	 * @param string $query - SQL Query
+	 * @param array $arguments - [optional] array containing arguments for the query
 	 * @return \PDOStatement - the statement after execution
 	 */
 	public function run_raw_query_and_return_statement($query, array $arguments = null)
@@ -116,6 +146,13 @@ class Utilities
 		return $r['statement'];
 	}
 
+	/**
+	 * Executes the selected query against the given arguments
+	 * @param       $query
+	 * @param array $arguments
+	 * @return array
+	 * @throws DatabaseCredentialValidationException
+	 */
 	private function execute_query($query, array $arguments = null)
 	{
 		$exception = null;
@@ -169,18 +206,6 @@ class Utilities
 		}
 
 		return $results;
-	}
-
-	/**
-	 * Runs a raw SQL query
-	 * @param string $query - SQL Query
-	 * @param array $arguments - [optional] array containing arguments for the query
-	 * @return boolean - the results of the ->execute statement
-	 */
-	public function run_raw_query_and_return_query_status($query, array $arguments = null)
-	{
-		$r = $this->execute_query($query, $arguments);
-		return $r['exec'];
 	}
 
 	private function build_where(array $where, $where_prefix = ' ', $variable_prefix = '_where_')
