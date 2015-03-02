@@ -455,7 +455,7 @@ class Utilities
 
 		$query = "SELECT{$this->config->db_cache_text} COUNT(*) FROM `$table`{$wherear['query']}$ordertext";
 		$statement = $this->run_raw_query_and_return_statement($query, sizeof($wherear['array'])?$wherear['array']:null);
-		return $statement->fetchAll(\PDO::FETCH_COLUMN, 0);
+		return intval($statement->fetch(\PDO::FETCH_COLUMN, 0));
 	}
 
 	/**
@@ -1179,8 +1179,8 @@ class Utilities
 	}
 
 	public function session_unset($key,
-          $run_session_start = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_EXECUTE_SESSION_START_ON_SESSION_GET,
-          $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
+	                              $run_session_start = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_EXECUTE_SESSION_START_ON_SESSION_GET,
+	                              $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
 	{
 		if($run_session_start && !isset($_SESSION))
 			session_start();
@@ -1195,8 +1195,8 @@ class Utilities
 	}
 
 	public function session_set($key, $value,
-        $run_session_start = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_EXECUTE_SESSION_START_ON_SESSION_GET,
-        $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
+	                            $run_session_start = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_EXECUTE_SESSION_START_ON_SESSION_GET,
+	                            $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
 	{
 		if($run_session_start && !isset($_SESSION))
 			session_start();
@@ -1520,13 +1520,13 @@ class Utilities
 	 */
 	function calculate_pagination($entries_per_page, $current_page, $total_entries)
 	{
+		var_dump($entries_per_page, $current_page, $total_entries); die;
+
 		//Calculate the current offset & total number of pages
 		$offset = ($current_page - 1) * $entries_per_page;
 		$divides_nicely = ($total_entries % $entries_per_page) == 0;
-		if($divides_nicely)
-			$total_pages = $total_entries / $entries_per_page;
-		else
-			$total_pages = ($total_entries / $entries_per_page) + 1;
+		$total_pages = $total_entries / $entries_per_page;
+		if(!$divides_nicely) $total_pages++;
 
 		$pages = array();
 
@@ -1704,7 +1704,7 @@ class Utilities
 	{
 		?>
 		<option value="<?php echo htmlentities($country_code);?>"<?php echo ($selected === true ? ' selected="selected"' : '')?>><?php echo htmlentities($country_name);?></option>
-		<?php
+	<?php
 	}
 
 	///////////////////////////////////////////////////////////////////////////
