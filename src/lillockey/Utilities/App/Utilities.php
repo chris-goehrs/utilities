@@ -291,6 +291,41 @@ class Utilities
 	}
 
 	/**
+	 * Limited select statement
+	 * @param        $table
+	 * @param array  $where
+	 * @param null   $orderby
+	 * @param string $asc_desc
+	 * @param int    $offset
+	 * @param null   $limit
+	 * @param int    $pdo_fetch_style
+	 * @param null   $pdo_fetch_class
+	 * @return array|null
+	 */
+	public function select($table, array $where = array(), $orderby = null, $asc_desc = 'ASC', $offset = 0, $limit = null, $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class = null)
+	{
+		$table = $this->config->table($table);
+
+		if($this->field_name_is_valid($table) === false) return null;
+		$ordertext = $this->build_order($orderby, $asc_desc);
+		$wherear = $this->build_where($where);
+		if($ordertext === null || $wherear === null) return null;
+		$offset = intval($offset);
+
+		$query = "SELECT * FROM `$table` {$wherear['query']}$ordertext";
+		if($limit){
+			$limit = intval($limit);
+			$query .= " LIMIT $limit";
+		}
+		if($offset > 0){
+			$offset = intval($offset);
+			$query .= " OFFSET $offset";
+		}
+
+		return $this->run_raw_query_and_return_all_records($query, $wherear['array'], $pdo_fetch_style, $pdo_fetch_class);
+	}
+
+	/**
 	 * Retrieves the first row in the table with $field matching $value
 	 * @param string $table
 	 * @param string $field
@@ -1475,6 +1510,47 @@ class Utilities
 	//      Special
 	///////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * Calculate everything regarding pagination
+	 * @param $entries_per_page
+	 * @param $current_page
+	 * @param $total_entries
+	 * @return array
+	 */
+	function calculate_pagination($entries_per_page, $current_page, $total_entries)
+	{
+		//Calculate the current offset & total number of pages
+		$offset = ($current_page - 1) * $entries_per_page;
+		$total_pages = ($total_entries % $entries_per_page == 0) ? ($total_entries / $entries_per_page) : ($total_entries / $entries_per_page + 1);
+		$pages = array();
+
+		//Build the individual pages
+		for($i = 1; $i <= $total_pages ; $i++ ){
+			$pages['pages'][$i]['index'] = $i;
+			if($i == $current_page){
+				$pages['pages'][$i]['enabled'] = false;
+				$pages['pages'][$i]['bootstrap'] = 'disabled';
+			}else{
+				$pages['pages'][$i]['enabled'] = true;
+				$pages['pages'][$i]['bootstrap'] = 'active';
+			}
+		}
+
+		//Previous
+		$pages['prev']['enabled'] = $current_page > 1;
+		$pages['prev']['enabled'] = $current_page > 1 ? 'active' : 'disabled';
+
+		//Next
+		$pages['prev']['enabled'] = $current_page > 1;
+		$pages['prev']['enabled'] = $current_page > 1 ? 'active' : 'disabled';
+
+		return array(
+			'offset' => $offset,
+			'total_pages' => $total_pages,
+			'page_data' => $pages
+		);
+	}
 
 	/**
 	 * Cleans the $_POST array of quotes - use if magic quotes isn't enabled
