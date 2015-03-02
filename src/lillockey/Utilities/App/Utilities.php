@@ -1520,7 +1520,7 @@ class Utilities
 	 */
 	function calculate_pagination($entries_per_page, $current_page, $total_entries)
 	{
-		var_dump($entries_per_page, $current_page, $total_entries); die;
+		//var_dump($entries_per_page, $current_page, $total_entries); die;
 
 		//Calculate the current offset & total number of pages
 		$offset = ($current_page - 1) * $entries_per_page;
