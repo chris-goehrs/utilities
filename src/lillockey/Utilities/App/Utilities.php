@@ -1522,7 +1522,8 @@ class Utilities
 	{
 		//Calculate the current offset & total number of pages
 		$offset = ($current_page - 1) * $entries_per_page;
-		$total_pages = ($total_entries % $entries_per_page == 0) ? ($total_entries / $entries_per_page) : ($total_entries / $entries_per_page + 1);
+		$divides_nicely = ($total_entries % $entries_per_page) == 0;
+		$total_pages = ($divides_nicely) ? ($total_entries / $entries_per_page) : ($total_entries / $entries_per_page + 1);
 		$pages = array();
 
 		//Build the individual pages
