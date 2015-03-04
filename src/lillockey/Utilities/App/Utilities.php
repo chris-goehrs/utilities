@@ -1536,21 +1536,21 @@ class Utilities
 			$pages['pages'][$i]['index'] = $i;
 			if($i == $current_page){
 				$pages['pages'][$i]['enabled'] = false;
-				$pages['pages'][$i]['bootstrap'] = 'disabled';
+				$pages['pages'][$i]['bootstrap'] = 'active';
 			}else{
 				$pages['pages'][$i]['enabled'] = true;
-				$pages['pages'][$i]['bootstrap'] = 'active';
+				$pages['pages'][$i]['bootstrap'] = '';
 			}
 		}
 
 		//Previous
 		$pages['prev']['enabled'] = $current_page > 1;
-		$pages['prev']['bootstrap'] = $current_page > 1 ? 'active' : 'disabled';
+		$pages['prev']['bootstrap'] = $current_page > 1 ? '' : 'disabled';
 		$pages['prev']['index'] = $current_page - 1;
 
 		//Next
 		$pages['next']['enabled'] = $current_page < $total_pages;
-		$pages['next']['bootstrap'] = $current_page < $total_pages ? 'active' : 'disabled';
+		$pages['next']['bootstrap'] = $current_page < $total_pages ? '' : 'disabled';
 		$pages['next']['index'] = $current_page + 1;
 
 		return array(
