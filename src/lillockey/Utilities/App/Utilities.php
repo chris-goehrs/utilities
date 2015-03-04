@@ -1546,10 +1546,12 @@ class Utilities
 		//Previous
 		$pages['prev']['enabled'] = $current_page > 1;
 		$pages['prev']['bootstrap'] = $current_page > 1 ? 'active' : 'disabled';
+		$pages['prev']['index'] = $current_page - 1;
 
 		//Next
 		$pages['next']['enabled'] = $current_page < $total_pages;
 		$pages['next']['bootstrap'] = $current_page < $total_pages ? 'active' : 'disabled';
+		$pages['next']['index'] = $current_page + 1;
 
 		return array(
 			'offset' => $offset,
