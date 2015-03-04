@@ -1527,6 +1527,7 @@ class Utilities
 		$divides_nicely = ($total_entries % $entries_per_page) == 0;
 		$total_pages = $total_entries / $entries_per_page;
 		if(!$divides_nicely) $total_pages++;
+		$total_pages = intval($total_pages);
 
 		$pages = array();
 
@@ -1544,11 +1545,11 @@ class Utilities
 
 		//Previous
 		$pages['prev']['enabled'] = $current_page > 1;
-		$pages['prev']['enabled'] = $current_page > 1 ? 'active' : 'disabled';
+		$pages['prev']['bootstrap'] = $current_page > 1 ? 'active' : 'disabled';
 
 		//Next
-		$pages['prev']['enabled'] = $current_page > 1;
-		$pages['prev']['enabled'] = $current_page > 1 ? 'active' : 'disabled';
+		$pages['next']['enabled'] = $current_page < $total_pages;
+		$pages['next']['bootstrap'] = $current_page < $total_pages ? 'active' : 'disabled';
 
 		return array(
 			'offset' => $offset,
