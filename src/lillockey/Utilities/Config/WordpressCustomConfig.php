@@ -16,10 +16,10 @@ final class WordpressCustomConfig extends AbstractCustomConfig
 {
     private $wp_db_prefix = '';
 
-    public function __construct($wp_db_prefix = 'wp_')
+    public function __construct($wp_db_prefix = '')
     {
         if(defined('DB_HOST')) 		$this->host = DB_HOST;
-        if(defined('DB_NAME')) 		$this->name = DB_NAME;
+        if(defined('DB_NAME')) 		$this->db =   DB_NAME;
         if(defined('DB_USER')) 		$this->user = DB_USER;
         if(defined('DB_PASSWORD')) 	$this->pass = DB_PASSWORD;
 
