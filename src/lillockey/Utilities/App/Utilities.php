@@ -544,7 +544,7 @@ class Utilities
 			if($i == 0){
 				$query .= " `$column_name`=:$prefab_key";
 			}else{
-				$query .= ", $column_name`=:$prefab_key";
+				$query .= ", `$column_name`=:$prefab_key";
 			}
 
 			//Next
