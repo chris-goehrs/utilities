@@ -4,6 +4,14 @@ namespace lillockey\Utilities\Config;
 
 /**
  * Class AbstractCustomConfig
+ *
+ * @property string host - The database provider's host name (ip address or domain)
+ * @property string user - The username for the database
+ * @property string pass - The password for the selected user for the database
+ * @property string db - The name of the database being accessed
+ * @property string db_type - The connection type for the DSN for PDO
+ *
+ *
  * @package Missilesilo\Utilities\Config
  */
 abstract class AbstractCustomConfig
@@ -14,6 +22,7 @@ abstract class AbstractCustomConfig
 	public $user = 'root';
 	public $pass = null;
 	public $db = null;
+	public $db_type = 'mysql';
 
     //Query cacheing
     public $db_use_query_cache = false;
