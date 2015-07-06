@@ -3,6 +3,7 @@
 namespace lillockey\Utilities\App;
 
 use lillockey\Utilities\Config\AbstractCustomConfig;
+use lillockey\Utilities\Config\DefaultCustomConfig;
 use lillockey\Utilities\Exceptions\DatabaseCredentialValidationException;
 use lillockey\Utilities\Exceptions\NotAnArrayException;
 
@@ -40,8 +41,10 @@ class Utilities
 	///////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 	private $config;
-	public function __construct(AbstractCustomConfig $config)
+	public function __construct(AbstractCustomConfig $config = null)
 	{
+		if($config == null)
+			$config = new DefaultCustomConfig();
 		$this->config = $config;
 	}
 
