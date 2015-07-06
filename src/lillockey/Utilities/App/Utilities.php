@@ -4,6 +4,7 @@ namespace lillockey\Utilities\App;
 
 use lillockey\Utilities\Config\AbstractCustomConfig;
 use lillockey\Utilities\Config\DefaultCustomConfig;
+use lillockey\Utilities\Exceptions\DatabaseConnectionTypeException;
 use lillockey\Utilities\Exceptions\DatabaseCredentialValidationException;
 use lillockey\Utilities\Exceptions\NotAnArrayException;
 
@@ -29,6 +30,8 @@ define('LILLOCKEY_GENERAL_UTILITIES__RANDOM_STRING__TYPE__ALPHA_NUMERIC_SPECIAL'
 
 /**
  * Class Utilities
+ *
+ * @property AbstractCustomConfig config
  * @package lillockey\Utilities\App
  */
 class Utilities
@@ -52,7 +55,7 @@ class Utilities
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
 	// SECTION 2
-	//      MySQL
+	//      SQL Database
 	///////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
 	private $pdo_instance = null;
@@ -62,6 +65,7 @@ class Utilities
 	 * @param bool $create_new_instance - Forces the creation of a new instance of PDO
 	 * @return \PDO
 	 * @throws DatabaseCredentialValidationException
+	 * @throws DatabaseConnectionTypeException
 	 */
 	public function getPDO($create_new_instance = true)
 	{
@@ -71,6 +75,9 @@ class Utilities
 		//Check for credential issues
 		if(!$this->config->db_credentials_are_valid())
 			throw new DatabaseCredentialValidationException('There was a problem with the db credentials');
+
+		if(!in_array($this->config->db_type, array('mysql', 'pgsql', 'cubrid', 'sybase', 'mssql', 'dblib', 'firebird', 'ibm', 'informix', 'oci', 'odbc', 'sqlite', 'sqlsrv', '4D')))
+			throw new DatabaseConnectionTypeException("The connection type \"{$this->config->db_type}\" was not valid.");
 
 
 		//Construct the options
@@ -82,8 +89,8 @@ class Utilities
 
 		//Construct and return the new instance
 		return ($passwd == ''
-			?$this->pdo_instance = new \PDO("mysql:host={$host}; dbname={$dbname}", $username, null, $options)
-			:$this->pdo_instance = new \PDO("mysql:host={$host}; dbname={$dbname}", $username, $passwd, $options));
+			?$this->pdo_instance = new \PDO("{$this->config->db_type}:host={$host}; dbname={$dbname}", $username, null, $options)
+			:$this->pdo_instance = new \PDO("{$this->config->db_type}:host={$host}; dbname={$dbname}", $username, $passwd, $options));
 	}
 
 	/**
@@ -104,12 +111,18 @@ class Utilities
 	 * @param string $query - SQL Query
 	 * @param array $arguments - [optional] array containing arguments for the query
 	 * @param int $pdo_fetch_style - [optional] pdo fetch style \PDO::FETCH_OBJ by default
+	 * @param string $pdo_fetch_class_name - [optional] the class name (used only when PDO::FETCH_CLASS is used for $pdo_fetch_style
 	 * @return array|\stdClass - the record found
 	 */
-	public function run_raw_query_and_return_first_record($query, array $arguments = null, $pdo_fetch_style = \PDO::FETCH_OBJ)
+	public function run_raw_query_and_return_first_record($query, array $arguments = null, $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class_name = '\\stdClass')
 	{
 		$statement = $this->run_raw_query_and_return_statement($query, $arguments);
-		return $statement->fetch($pdo_fetch_style);
+		if($pdo_fetch_style == \PDO::FETCH_CLASS){
+			$statement->setFetchMode($pdo_fetch_style, $pdo_fetch_class_name);
+			return $statement->fetch($pdo_fetch_style);
+		}else{
+			return $statement->fetch($pdo_fetch_style);
+		}
 	}
 
 	/**
@@ -117,12 +130,18 @@ class Utilities
 	 * @param string $query - SQL Query
 	 * @param array $arguments - [optional] array containing arguments for the query
 	 * @param int $pdo_fetch_style - [optional] pdo fetch style \PDO::FETCH_OBJ by default
+	 * @param string $pdo_fetch_class_name - [optional] the class name (used only when PDO::FETCH_CLASS is used for $pdo_fetch_style
 	 * @return array - the records found
 	 */
-	public function run_raw_query_and_return_all_records($query, array $arguments = null, $pdo_fetch_style = \PDO::FETCH_OBJ)
+	public function run_raw_query_and_return_all_records($query, array $arguments = null, $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class_name = '\\stdClass')
 	{
 		$statement = $this->run_raw_query_and_return_statement($query, $arguments);
-		return $statement->fetchAll($pdo_fetch_style);
+		if($pdo_fetch_style == \PDO::FETCH_CLASS){
+			$statement->setFetchMode($pdo_fetch_style, $pdo_fetch_class_name);
+			return $statement->fetchAll($pdo_fetch_style);
+		}else{
+			return $statement->fetchAll($pdo_fetch_style);
+		}
 	}
 
 	/**
@@ -337,7 +356,7 @@ class Utilities
 	 * @param string $asc_desc [optional] must be either ASC or DESC
 	 * @return \stdClass|NULL
 	 */
-	public function select_one_by($table, $field, $value, $orderby = null, $asc_desc = 'ASC')
+	public function select_one_by($table, $field, $value, $orderby = null, $asc_desc = 'ASC', $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class = null)
 	{
 		$table = $this->config->table($table);
 
@@ -351,8 +370,7 @@ class Utilities
 		$ordertext = ($orderby === null?'':" ORDER BY `$orderby` $asc_desc");
 
 		$query = "SELECT{$this->config->db_cache_text} * FROM `$table` WHERE `$field` = :id LIMIT 1";
-		$statement = $this->run_raw_query_and_return_statement($query, array('id' => $value));
-		return $statement->fetch(\PDO::FETCH_OBJ);
+		return $this->run_raw_query_and_return_first_record($query, array('id' => $value), $pdo_fetch_style, $pdo_fetch_class);
 	}
 
 	/**
@@ -387,9 +405,11 @@ class Utilities
 	 * @param string $value
 	 * @param string $orderby [optional] if null, no ordering will be done
 	 * @param string $asc_desc [optional] must be either ASC or DESC
+	 * @param int	 $pdo_fetch_style [optional] PDO::FETCH_(type)
+	 * @param string $pdo_fetch_class [optional] used to populate PDO::FETCH_CLASS
 	 * @return NULL|array (stdObject)
 	 */
-	public function select_all_by($table, $field, $value, $orderby = null, $asc_desc = 'ASC')
+	public function select_all_by($table, $field, $value, $orderby = null, $asc_desc = 'ASC', $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class = null)
 	{
 		$table = $this->config->table($table);
 
@@ -403,17 +423,19 @@ class Utilities
 		$ordertext = ($orderby === null?'':" ORDER BY `$orderby` $asc_desc");
 
 		$query = "SELECT{$this->config->db_cache_text} * FROM `$table` WHERE `$field` = :id$ordertext";
-		return $this->run_raw_query_and_return_all_records($query, array('id' => $value), \PDO::FETCH_OBJ);
+		return $this->run_raw_query_and_return_all_records($query, array('id' => $value), $pdo_fetch_style, $pdo_fetch_class);
 	}
 
 	/**
 	 * Retrieves all rows in the table ordered
 	 * @param string $table - table to dump
 	 * @param string $orderby - field to order by
-	 * @param string $asc_desc - either 'ASC' or 'DESC'
+	 * @param string $asc_desc [optional] - either 'ASC' or 'DESC'
+	 * @param int    $pdo_fetch_style [optional]
+	 * @param string $pdo_fetch_class [optional]
 	 * @return array|NULL
 	 */
-	public function select_all_order($table, $orderby, $asc_desc = 'ASC')
+	public function select_all_order($table, $orderby, $asc_desc = 'ASC', $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class = null)
 	{
 		$table = $this->config->table($table);
 
@@ -423,7 +445,7 @@ class Utilities
 
 
 		$query = "SELECT{$this->config->db_cache_text} * FROM `$table` ORDER BY $orderby $asc_desc";
-		return $this->run_raw_query_and_return_all_records($query, null, \PDO::FETCH_OBJ);
+		return $this->run_raw_query_and_return_all_records($query, null, $pdo_fetch_style, $pdo_fetch_class);
 	}
 
 	/**
@@ -622,6 +644,19 @@ class Utilities
 		return $this->run_raw_query_and_return_query_status($query, $submitted_fields);
 	}
 
+	public function delete($table, array $where)
+	{
+		$table = $this->config->table($table);
+
+		if($this->field_name_is_valid($table) === false) return false;
+		if(!sizeof($where)) return false;
+
+		$wherear = $this->build_where($where);
+
+		$query = "DELETE FROM `$table` {$wherear['query']}";
+		return $this->run_raw_query_and_return_query_status($query, $wherear['array']);
+	}
+
 	/**
 	 * Deletes the records where the field ($id_field) equals the value ($id_value)
 	 * @param string $table
@@ -629,14 +664,14 @@ class Utilities
 	 * @param string $id_value
 	 * @return boolean
 	 */
-	public function delete($table, $id_field, $id_value)
+	public function delete_by_1($table, $id_field, $id_value)
 	{
-		$table = $this->config->table($table);
 		if($this->field_name_is_valid($table) === false) return false;
 		if($this->field_name_is_valid($id_field) === false) return false;
 
-		$query = "DELETE FROM `$table` WHERE `$id_field`=:id_value";
-		return $this->run_raw_query_and_return_query_status($query, array('id_value' => $id_value));
+		return $this->delete($table, array(
+			$id_field => $id_value
+		));
 	}
 
 	/**
@@ -648,15 +683,17 @@ class Utilities
 	 * @param string $id_value2
 	 * @return boolean
 	 */
-	public function delete2($table, $id_field1, $id_value1, $id_field2, $id_value2)
+	public function delete_by_2($table, $id_field1, $id_value1, $id_field2, $id_value2)
 	{
 		$table = $this->config->table($table);
 		if($this->field_name_is_valid($table) === false) return false;
 		if($this->field_name_is_valid($id_field1) === false) return false;
 		if($this->field_name_is_valid($id_field2) === false) return false;
 
-		$query = "DELETE FROM `$table` WHERE `$id_field1`=:id_value1 AND `$id_field2`=:id_value2";
-		return $this->run_raw_query_and_return_query_status($query, array('id_value1' => $id_value1, 'id_value2' => $id_value2));
+		return $this->delete($table, array(
+			$id_field1 => $id_value1,
+			$id_field2 => $id_value2
+		));
 	}
 
 	/**
@@ -1218,7 +1255,7 @@ class Utilities
 	 * @param array/string/object $keys
 	 * @param boolean $throw_exception_when_cant_be_searched
 	 * @throws \Exception
-	 * @return unknown - the value | null
+	 * @return mixed - the value | null
 	 */
 	public function cookie($keys, $throw_exception_when_cant_be_searched = LILLOCKEY_GENERAL_UTILITIES__DEFAULT_THROW_EXCEPTION_IN_REQUEST_SEARCH)
 	{
@@ -1633,11 +1670,12 @@ class Utilities
 	}
 
 
-	/* ===========================================================================
-		 * START: Locality Helpers
-		 * Inserted By: Christopher Goehrs 1/10/2015
-		 * ===========================================================================
-		 */
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	// SECTION 9
+	//      Locality Helpers
+	///////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
 
 	/**
 	 * @param array $exclude = a list of country codes to exclude from the results
@@ -1715,7 +1753,7 @@ class Utilities
 
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-	// SECTION 9
+	// SECTION 10
 	//      Logging
 	///////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
