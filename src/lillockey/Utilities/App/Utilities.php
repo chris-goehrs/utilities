@@ -171,7 +171,7 @@ class Utilities
 	 * @param string $str
 	 * @return boolean true if serialized | false otherwise
 	 */
-	public function isSerialized($str) {
+	public function is_serialized($str) {
 		return ($str == serialize(false) || @unserialize($str) !== false);
 	}
 
@@ -338,9 +338,13 @@ class Utilities
 		return $this->sanitize_url($base_url.(sizeof($subids)?'?'.http_build_query($subids):''));
 	}
 
+	/**
+	 * @return string
+	 * @throws NotAnArrayException
+	 */
 	public function get_current_domain()
 	{
-		return $_SERVER['HTTP_HOST'];
+		return $this->server(array('HTTP_HOST', 'SERVER_NAME'));
 	}
 
 	/**
@@ -405,7 +409,7 @@ class Utilities
 	 */
 	public function referer()
 	{
-		return $_SERVER['HTTP_REFERER'];
+		return $this->server('HTTP_REFERER');
 	}
 
 	/**
