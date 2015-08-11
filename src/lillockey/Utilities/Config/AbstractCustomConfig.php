@@ -32,6 +32,7 @@ abstract class AbstractCustomConfig
     public $db_throw_exceptions = true;
 
     //Log-Related =======================================================
+    public $log_type = 'file';
     public $log_location = './general_utilities.log';
     public $allow_write_to_log = true; //TODO: Turn this off when live
     public $db_log_queries = true;

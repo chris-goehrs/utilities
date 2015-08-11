@@ -20,5 +20,7 @@ class FullCustomConfig extends DefaultCustomConfig
         $this->user = $user;
         $this->pass = $pass;
         $this->db   = $db;
+
+        parent::__construct();
     }
 } 

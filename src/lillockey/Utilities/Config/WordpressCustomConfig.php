@@ -10,7 +10,8 @@ namespace lillockey\Utilities\Config;
 
 /**
  * Class WordpressCustomConfig
- * @package Missilesilo\Utilities\Config
+ *
+ * @package lillockey\Utilities\Config
  */
 final class WordpressCustomConfig extends AbstractCustomConfig
 {
@@ -24,6 +25,8 @@ final class WordpressCustomConfig extends AbstractCustomConfig
         if(defined('DB_PASSWORD')) 	$this->pass = DB_PASSWORD;
 
         $this->wp_db_prefix = $wp_db_prefix;
+
+        parent::__construct();
     }
 
     /**
