@@ -17,7 +17,7 @@ namespace lillockey\Utilities\App;
  *
  * @package lillockey\Utilities\App
  */
-class Locality extends Abstract_Utilities_Named_App_Class
+class Locality extends AbstractUtility
 {
 	private $db_instance;
 

@@ -15,7 +15,7 @@ use lillockey\Utilities\Config\DefaultCustomConfig;
 use lillockey\Utilities\Exceptions\DatabaseConnectionTypeException;
 use lillockey\Utilities\Exceptions\DatabaseCredentialValidationException;
 
-class DB extends Abstract_Utilities_Named_App_Class
+class DB extends AbstractUtility
 {
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////

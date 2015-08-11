@@ -8,8 +8,7 @@
 
 namespace lillockey\Utilities\App;
 
-
-class Abstract_Utilities_Named_App_Class
+abstract class AbstractUtility
 {
 	protected $name;
 

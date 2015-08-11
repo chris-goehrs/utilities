@@ -28,6 +28,7 @@ class InstanceHolder
 	private static $util_instance = null;
 	private static $log_instances = array();
 	private static $locality_insances = array();
+	private static $image_instances = array();
 
 	/**
 	 * Stores an instance of AbstractCustomConfig using the name provided
@@ -59,7 +60,7 @@ class InstanceHolder
 	 * Retrieves an instance of the utilities class
 	 * @return Utilities
 	 */
-	public static function &util()
+	public static function util()
 	{
 		if(self::$util_instance == null)
 			self::$util_instance = new Utilities();
@@ -71,7 +72,7 @@ class InstanceHolder
 	 * @param null $name
 	 * @return DB|null
 	 */
-	public static function &db($name = null)
+	public static function db($name = null)
 	{
 		if(!self::pdo_enabled()) return null;
 		if($name == null) $name = INSTANCE_HOLDER__DEFAULT_CONFIGURATION_NAME;
@@ -81,7 +82,7 @@ class InstanceHolder
 		}
 
 		if($config = self::config($name)){
-			return self::$db_instances[$name] = new DB($config);
+			return self::$db_instances[$name] = new DB($config, $name);
 		}else{
 			return null;
 		}
@@ -92,7 +93,7 @@ class InstanceHolder
 	 * @param string $name - the name of the configuration to use
 	 * @return Locality|null
 	 */
-	public static function &locality($name = null)
+	public static function locality($name = null)
 	{
 		if(!self::pdo_enabled()) return null;
 		if($name == null) $name = INSTANCE_HOLDER__DEFAULT_CONFIGURATION_NAME;
@@ -103,13 +104,13 @@ class InstanceHolder
 
 		if($db = self::db($name)){
 			//It has the db.  Let's make a new instance
-			if($locality = self::$locality_insances[$name] = new Locality($db)) return $locality;
+			if($locality = self::$locality_insances[$name] = new Locality($db, $name)) return $locality;
 		}
 
 		return null;
 	}
 
-	public static function &log($name = null)
+	public static function log($name = null)
 	{
 		if($name == null) $name = INSTANCE_HOLDER__DEFAULT_CONFIGURATION_NAME;
 
@@ -120,7 +121,7 @@ class InstanceHolder
 		if($config = self::config($name)){
 			switch($config->log_type){
 				case 'file':
-					return self::$log_instances[$name] = new File_Logger($config);
+					return self::$log_instances[$name] = new File_Logger($config, $name);
 				default:
 					return null;
 			}
@@ -129,7 +130,16 @@ class InstanceHolder
 		}
 	}
 
+	public static function image($name = null)
+	{
+		if($name == null) $name = INSTANCE_HOLDER__DEFAULT_CONFIGURATION_NAME;
 
+		if(array_key_exists($name, self::$image_instances)){
+			return self::$image_instances[$name];
+		}
+
+		return self::$image_instances[$name] = new Image($name);
+	}
 
 	public static function pdo_enabled()
 	{

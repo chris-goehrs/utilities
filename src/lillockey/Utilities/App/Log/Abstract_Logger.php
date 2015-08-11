@@ -8,16 +8,17 @@
 
 namespace lillockey\Utilities\App\Log;
 
-
+use lillockey\Utilities\App\Abstract_Utilities_Named_App_Class;
 use lillockey\Utilities\Config\AbstractCustomConfig;
 
-abstract class Abstract_Logger implements Loggable
+abstract class Abstract_Logger extends \lillockey\Utilities\App\Base\AbstractUtility implements Loggable
 {
 	protected $config = null;
 
-	public function __construct(AbstractCustomConfig &$config)
+	public function __construct(AbstractCustomConfig &$config, $name)
 	{
 		$this->config = $config;
+		parent::__construct($name);
 	}
 
 	/**

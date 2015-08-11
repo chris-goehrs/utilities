@@ -4,9 +4,6 @@ namespace lillockey\Utilities\App;
 
 use lillockey\Utilities\App\Containers\FileInformationResults;
 use lillockey\Utilities\Config\AbstractCustomConfig;
-use lillockey\Utilities\Config\DefaultCustomConfig;
-use lillockey\Utilities\Exceptions\DatabaseConnectionTypeException;
-use lillockey\Utilities\Exceptions\DatabaseCredentialValidationException;
 use lillockey\Utilities\Exceptions\NotAnArrayException;
 
 //================================================
