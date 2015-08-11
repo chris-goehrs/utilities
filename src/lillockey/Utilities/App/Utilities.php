@@ -2,6 +2,7 @@
 
 namespace lillockey\Utilities\App;
 
+use lillockey\Utilities\App\Containers\FileInformationResults;
 use lillockey\Utilities\Config\AbstractCustomConfig;
 use lillockey\Utilities\Config\DefaultCustomConfig;
 use lillockey\Utilities\Exceptions\DatabaseConnectionTypeException;
@@ -819,7 +820,7 @@ class Utilities
 
 	///////////////////////////////////////////////////////////////////////////
 	///////////////////////////////////////////////////////////////////////////
-	// SECTION 8
+	// SECTION 6
 	//      Special
 	///////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////
@@ -939,5 +940,96 @@ class Utilities
 		}else{
 			return (sizeof($keys)?$this->getArrayValue($data, $keys):null);
 		}
+	}
+
+	///////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////
+	// SECTION 7
+	//      File/Data Information
+	///////////////////////////////////////////////////////////////////////////
+	//////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * An array of known mime types and their default extensions
+	 *
+	 * NOTE: This is not intended to be comprehensive on any level.
+	 * Rather, it is intended to be a simple list for processing some
+	 * basic file types that are encountered during upload/storage.
+	 * @var array
+	 */
+	private $mime_to_ext = array(
+		// Images
+		'image/jpg' => 'jpg',
+		'image/jpeg' => 'jpg',
+		'image/png' => 'png',
+		'image/gif' => 'gif',
+	);
+
+	/**
+	 * Returns the extension for the mime type given.  If none is found, null is returned
+	 * @param $mime_type
+	 * @return mixed
+	 */
+	public function provide_recommended_file_extension($mime_type)
+	{
+		return $this->getArrayValue($this->mime_to_ext, $mime_type);
+	}
+
+	/**
+	 * @param $file_path - The location of the file to retrieve information against
+	 * @return FileInformationResults
+	 * @throws \Exception
+	 */
+	public function get_file_information($file_path)
+	{
+		if(!InstanceHolder::fileinfo_enabled())
+			throw new \Exception("FileInfo extension not available");
+
+		//Grab the mime type and encoding
+		$finfo = finfo_open(FILEINFO_MIME);
+		$full_mime = finfo_file($finfo, $file_path);
+		$mimex = explode(";", $full_mime);
+		$type = $this->getArrayValue($mimex, 0);
+		$full_encode = $this->getArrayValue($mimex, 1);
+		$full_encode = $full_encode === null ? '' : $full_encode;
+		$encodex = explode('=', $full_encode);
+		$encoding = $this->getArrayValue($encodex, 1);
+
+		//Grab the file size
+		$size = filesize($file_path);
+
+		//Grab the recommended extension
+		$recommended_extension = $this->provide_recommended_file_extension($type);
+
+		return new FileInformationResults($type, $encoding, $recommended_extension, $size);
+	}
+
+	/**
+	 * @param $data - the raw data to check
+	 * @return FileInformationResults
+	 * @throws \Exception
+	 */
+	public function get_data_information(&$data)
+	{
+		if(!InstanceHolder::fileinfo_enabled())
+			throw new \Exception("FileInfo extension not available");
+
+		//Grab the mime type and encoding
+		$finfo = finfo_open(FILEINFO_MIME);
+		$full_mime = finfo_buffer($finfo, $data);
+		$mimex = explode(";", $full_mime);
+		$type = $this->getArrayValue($mimex, 0);
+		$full_encode = $this->getArrayValue($mimex, 1);
+		$full_encode = $full_encode === null ? '' : $full_encode;
+		$encodex = explode('=', $full_encode);
+		$encoding = $this->getArrayValue($encodex, 1);
+
+		//Grab the file size
+		$size = strlen($data);
+
+		//Grab the recommended extension
+		$recommended_extension = $this->provide_recommended_file_extension($type);
+
+		return new FileInformationResults($type, $encoding, $recommended_extension, $size);
 	}
 }   //END: Class Utilities

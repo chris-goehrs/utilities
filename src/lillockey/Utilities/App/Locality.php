@@ -17,13 +17,14 @@ namespace lillockey\Utilities\App;
  *
  * @package lillockey\Utilities\App
  */
-class Locality
+class Locality extends Abstract_Utilities_Named_App_Class
 {
 	private $db_instance;
 
-	public function __construct(DB &$db)
+	public function __construct(DB &$db, $name)
 	{
 		$this->db_instance = $db;
+		parent::__construct($name);
 	}
 
 	/**
