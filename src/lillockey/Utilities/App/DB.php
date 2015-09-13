@@ -144,7 +144,7 @@ class DB extends AbstractUtility
 	public function run_raw_query_and_return_query_status($query, array $arguments = null)
 	{
 		$r = $this->execute_query($query, $arguments);
-		return $r['exec'];
+		return $r->exec();
 	}
 
 	/**
@@ -156,7 +156,7 @@ class DB extends AbstractUtility
 	public function run_raw_query_and_return_statement($query, array $arguments = null)
 	{
 		$r = $this->execute_query($query, $arguments);
-		return $r['statement'];
+		return $r->statement();
 	}
 
 	/**
@@ -197,24 +197,24 @@ class DB extends AbstractUtility
 
 
 		$this->write_to_log('QUERY_EXECUTED!');
-		$this->write_to_log('    Query: '. $results['query']);
-		if(is_array($results['arguments'])){
-			foreach($results['arguments'] as $key => $value){
+		$this->write_to_log('    Query: '. $results->query());
+		if(is_array($results->arguments())){
+			foreach($results->arguments() as $key => $value){
 				$this->write_to_log("    Query Argument '$key' = '$value'");
 			}
 		}
-		$this->write_to_log('  Execution Result: '.($results['exec']?'ok':'NOT OK!'));
-		$this->write_to_log('  Insert ID Value: '.$results['id']);
-		$statement = $results['statement'];
-		if(!$results['exec']){
+		$this->write_to_log('  Execution Result: '.($results->exec()?'ok':'NOT OK!'));
+		$this->write_to_log('  Insert ID Value: '.$results->id());
+		$statement = $results->statement();
+		if(!$results->exec()){
 			assert($statement instanceof \PDOStatement);
 			$err = $statement->errorInfo();
 			$this->write_to_log('  !!Error Code: '. $err[0]);
 			$this->write_to_log('  !!Driver Error Code: '. $err[1]);
 			$this->write_to_log('  !!Driver Error Message: '. $err[2]);
 		}
-		if($results['exception'] instanceof \Exception){
-			$ex = $results['exception'];
+		if($results->exception() instanceof \Exception){
+			$ex = $results->exception();
 			$this->write_to_log('  Exception: '.$ex->getMessage().'\n'.$ex->getTraceAsString());
 		}
 
