@@ -8,9 +8,6 @@
 
 namespace lillockey\Utilities\App\Log;
 
-
-use lillockey\Utilities\Config\AbstractCustomConfig;
-
 class File_Logger extends Abstract_Logger
 {
 

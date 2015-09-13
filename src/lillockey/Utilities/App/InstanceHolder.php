@@ -8,10 +8,10 @@
 
 namespace lillockey\Utilities\App;
 
-define ('INSTANCE_HOLDER__DEFAULT_CONFIGURATION_NAME', sha1(time()));
-
 use lillockey\Utilities\App\Log\File_Logger;
 use lillockey\Utilities\Config\AbstractCustomConfig;
+
+define ('INSTANCE_HOLDER__DEFAULT_CONFIGURATION_NAME', sha1(time()));
 
 /**
  * Class InstanceHolder

@@ -9,9 +9,10 @@
 namespace lillockey\Utilities\App\Log;
 
 use lillockey\Utilities\App\Abstract_Utilities_Named_App_Class;
+use lillockey\Utilities\App\AbstractUtility;
 use lillockey\Utilities\Config\AbstractCustomConfig;
 
-abstract class Abstract_Logger extends \lillockey\Utilities\App\Base\AbstractUtility implements Loggable
+abstract class Abstract_Logger extends AbstractUtility implements Loggable
 {
 	protected $config = null;
 

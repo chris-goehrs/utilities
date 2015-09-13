@@ -15,6 +15,9 @@
 	"autoload": {
 		"psr-0": {
 			"lillockey": "src/"
+		},
+	  	"psr-4": {
+		  "lillockey\\Utilities\\": "src/lillockey/Utilities/"
 		}
 	}
 }
