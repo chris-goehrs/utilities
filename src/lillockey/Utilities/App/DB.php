@@ -536,7 +536,7 @@ class DB extends AbstractUtility
 
 		//Run the query
 		$r = $this->execute_query($query, $submitted_values);
-		return ($r['exec']?$r['id']:false);
+		return ($r->exec()?$r->id():false);
 	}
 
 	public function update($table, array $where, array $fields)
