@@ -184,6 +184,12 @@ class DB extends AbstractUtility
 		return $this->log_query($results);
 	}
 
+	private function write_to_log($to_write = '')
+	{
+		$log = InstanceHolder::log($this->name);
+		$log->write_to_log($to_write);
+	}
+
 	private function log_query(QueryResults &$results)
 	{
 		if(!$this->config->db_log_queries) return $results;	//TODO: rework this
