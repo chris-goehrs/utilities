@@ -34,7 +34,7 @@ class QueryResults
 	 * @param int             $id
 	 * @param \Exception|null $exception
 	 */
-	public function __construct($query, array &$arguments, \PDO &$db, $exec, \PDOStatement &$statement, $id = 0, \Exception $exception = null)
+	public function __construct($query, $arguments, \PDO &$db, $exec, \PDOStatement &$statement, $id = 0, \Exception $exception = null)
 	{
 		$this->query = $query;
 		$this->arguments = $arguments;
