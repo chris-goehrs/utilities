@@ -9,6 +9,8 @@
 namespace lillockey\Utilities\App\Http;
 
 
+use lillockey\Utilities\App\XML\XmlElement;
+
 class HttpResponse
 {
 	private $response;
@@ -43,6 +45,15 @@ class HttpResponse
 	public function json($assoc = false)
 	{
 		return json_decode($this->getResponse(), $assoc);
+	}
+
+	/**
+	 * Parses the response and returns the root XmlElement if valid
+	 * @return XmlElement|null
+	 */
+	public function xml()
+	{
+		return XmlElement::parse($this->getResponse());
 	}
 
 	public function getHTTPCode()
