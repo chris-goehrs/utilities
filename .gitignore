@@ -3,3 +3,4 @@
 
 tests/_output/*
 general_utilities.log
+composer.lock
