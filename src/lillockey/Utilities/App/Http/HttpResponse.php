@@ -40,6 +40,11 @@ class HttpResponse
 		return $this->response;
 	}
 
+	public function json($assoc = false)
+	{
+		return json_decode($this->getResponse(), $assoc);
+	}
+
 	public function getHTTPCode()
 	{
 		return $this->response_code;
