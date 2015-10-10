@@ -289,6 +289,15 @@ class DB extends AbstractUtility
 		return $statement->fetchAll(\PDO::FETCH_COLUMN, 0);
 	}
 
+	/**
+	 * @param        $table
+	 * @param array  $where
+	 * @param null   $orderby
+	 * @param string $asc_desc
+	 * @param int    $pdo_fetch_style
+	 * @param null   $pdo_fetch_class
+	 * @return array|null
+	 */
 	public function select_all($table, array $where = array(), $orderby = null, $asc_desc = 'ASC', $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class = null)
 	{
 		$table = $this->config->table($table);
@@ -459,17 +468,37 @@ class DB extends AbstractUtility
 		return intval($statement->fetchColumn(0));
 	}
 
+	/**
+	 * This is left in there for backwards compatibility
+	 * TODO: Remove on text major release
+	 * @deprecated alias of DB::count
+	 * @param        $table
+	 * @param array  $where
+	 * @param null   $orderby
+	 * @param string $asc_desc
+	 * @return int|null
+	 */
 	public function count_by_multi($table, array $where = array(), $orderby = null, $asc_desc = 'ASC')
+	{
+		return $this->count($table, $where);
+	}
+
+	/**
+	 * Run a count against the given table
+	 * @param string $table
+	 * @param array  $where
+	 * @return int|null
+	 */
+	public function count($table, array $where = array())
 	{
 		$table = $this->config->table($table);
 
 		//Clean the questionable fields
 		if($this->field_name_is_valid($table) === false) return null;
-		$ordertext = $this->build_order($orderby, $asc_desc);
 		$wherear = $this->build_where($where);
-		if($ordertext === null || $wherear === null) return null;
+		if($wherear === null) return null;
 
-		$query = "SELECT{$this->config->db_cache_text} COUNT(*) FROM `$table`{$wherear['query']}$ordertext";
+		$query = "SELECT{$this->config->db_cache_text} COUNT(*) FROM `$table`{$wherear['query']}";
 		$statement = $this->run_raw_query_and_return_statement($query, sizeof($wherear['array'])?$wherear['array']:null);
 		return intval($statement->fetch(\PDO::FETCH_COLUMN, 0));
 	}
@@ -539,6 +568,13 @@ class DB extends AbstractUtility
 		return ($r->exec()?$r->id():false);
 	}
 
+	/**
+	 * Runs an update statement against the table
+	 * @param string $table
+	 * @param array $where
+	 * @param array $fields
+	 * @return bool
+	 */
 	public function update($table, array $where, array $fields)
 	{
 		$table = $this->config->table($table);
