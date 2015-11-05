@@ -26,8 +26,8 @@ class XmlElement
 		xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, 0);
 		xml_parser_set_option($parser, XML_OPTION_SKIP_WHITE, 1);
 		$success = xml_parse_into_struct($parser, $xml, $tags);
-		if(!$success) return null;
 		xml_parser_free($parser);
+		if(!$success) return null;
 
 		$elements = array();  // the currently filling [child] XmlElement array
 		$stack = array();
