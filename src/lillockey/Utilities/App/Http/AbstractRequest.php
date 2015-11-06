@@ -14,7 +14,7 @@ abstract class AbstractRequest implements HttpRequestable
 	protected $url = '';
 
 	private $curl_options_to_set = array();
-
+	
 	public function __construct($base_url, array $query_arguments = null)
 	{
 		if($query_arguments == null) $query_arguments = array();
