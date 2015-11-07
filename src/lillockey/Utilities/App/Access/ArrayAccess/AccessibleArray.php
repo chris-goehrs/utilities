@@ -6,13 +6,14 @@
  * Time: 5:52 PM
  */
 
-namespace lillockey\Utilities\App\Access;
+namespace lillockey\Utilities\App\Access\ArrayAccess;
 
 
+use lillockey\Utilities\App\Access\ObjectAccessible;
 use lillockey\Utilities\App\InstanceHolder;
 use Traversable;
 
-class ArrayAccess implements \IteratorAggregate
+class AccessibleArray implements ObjectAccessible
 {
 	private $array;
 
@@ -26,12 +27,12 @@ class ArrayAccess implements \IteratorAggregate
      * @param int     $offset
      * @param int     $length [optional]
      * @param boolean $preserve_keys [optional]
-     * @return ArrayAccess
+     * @return AccessibleArray
      */
     public function slice($offset, $length = null, $preserve_keys = null)
     {
         $ar = array_slice($this->array, $offset, $length, $preserve_keys);
-        return new ArrayAccess($ar);
+        return new AccessibleArray($ar);
     }
 
     /**
@@ -164,7 +165,7 @@ class ArrayAccess implements \IteratorAggregate
     public function kexists($key)
     {
         if($key !== null) return null;
-        return array_key_exists($key, $this->array());
+        return array_key_exists($key, $this->array);
     }
 
     /**
@@ -271,5 +272,93 @@ class ArrayAccess implements \IteratorAggregate
 	public function getIterator()
 	{
 		return new \ArrayIterator($this->array);
+	}
+
+	/**
+	 * (PHP 5 &gt;= 5.0.0)<br/>
+	 * Whether a offset exists
+	 *
+	 * @link http://php.net/manual/en/arrayaccess.offsetexists.php
+	 * @param mixed $offset <p>
+	 *                      An offset to check for.
+	 *                      </p>
+	 * @return boolean true on success or false on failure.
+	 *                      </p>
+	 *                      <p>
+	 *                      The return value will be casted to boolean if non-boolean was returned.
+	 */
+	public function offsetExists($offset)
+	{
+		return $this->exists($offset);
+	}
+
+	/**
+	 * (PHP 5 &gt;= 5.0.0)<br/>
+	 * Offset to retrieve
+	 *
+	 * @link http://php.net/manual/en/arrayaccess.offsetget.php
+	 * @param mixed $offset <p>
+	 *                      The offset to retrieve.
+	 *                      </p>
+	 * @return mixed Can return all value types.
+	 */
+	public function offsetGet($offset)
+	{
+		$this->raw($offset);
+	}
+
+	/**
+	 * (PHP 5 &gt;= 5.0.0)<br/>
+	 * Offset to set
+	 *
+	 * @link http://php.net/manual/en/arrayaccess.offsetset.php
+	 * @param mixed $offset <p>
+	 *                      The offset to assign the value to.
+	 *                      </p>
+	 * @param mixed $value  <p>
+	 *                      The value to set.
+	 *                      </p>
+	 * @return void
+	 */
+	public function offsetSet($offset, $value)
+	{
+		$this->set($offset, $value);
+	}
+
+	/**
+	 * (PHP 5 &gt;= 5.0.0)<br/>
+	 * Offset to unset
+	 *
+	 * @link http://php.net/manual/en/arrayaccess.offsetunset.php
+	 * @param mixed $offset <p>
+	 *                      The offset to unset.
+	 *                      </p>
+	 * @return void
+	 */
+	public function offsetUnset($offset)
+	{
+		$this->un_set($offset);
+	}
+
+	public function __toObject()
+	{
+		return (object) $this->array;
+	}
+
+	public function jsonSerialize()
+	{
+		return json_encode($this->array);
+	}
+
+	public function serialize()
+	{
+		return serialize($this->array);
+	}
+
+	public function unserialize($serialized)
+	{
+		$unser = unserialize($serialized);
+		if(is_array($unser)) $this->array = $unser;
+		$this->array = (array) $unser;
 	}
 }

@@ -6,12 +6,12 @@
  * Time: 10:44 AM
  */
 
-namespace lillockey\Utilities\App\Access;
+namespace lillockey\Utilities\App\Access\ArrayAccess;
 
 
 use lillockey\Utilities\Exceptions\NotAnArrayException;
 
-class GetArray extends ArrayAccess
+class GetArray extends AccessibleArray
 {
     public function __construct()
     {
