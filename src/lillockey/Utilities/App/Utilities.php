@@ -154,13 +154,39 @@ class Utilities
 	 * @param $value
 	 * @return bool true if it can / false if it cannot
 	 */
-	public function is_str($value)
+	public function is_str(&$value)
 	{
 		return !is_array($value) &&
 		(
 			(!is_object( $value ) && settype( $value, 'string' ) !== false) ||
 			(is_object($value) && method_exists($value, '__toString'))
 		);
+	}
+
+	/**
+	 * Evaluates to see if the given value is a valid json string
+	 *
+	 * <p>
+	 * <strong>NOTE</strong>:
+	 * This is based on the answer found <a href="http://stackoverflow.com/questions/6041741/fastest-way-to-check-if-a-string-is-json-in-php">here</a>
+	 * </p>
+	 *
+	 * @param $value
+	 * @return bool
+	 */
+	public function is_json(&$value)
+	{
+		//If it's null, of course it's not json (derp)
+		if($value == null) return false;
+
+		//If it can't be interpereted as a string, it's not json.
+		if(!$this->is_str($value)) return false;
+
+		//If it doesn't contain either "{" or "[", it might evaluate as okay but not actually be a json object
+		if(strpos($value, '{') === false && strpos($value, '[') === false) return false;
+
+		return !preg_match('/[^,:{}\\[\\]0-9.\\-+Eaeflnr-u \\n\\r\\t]/',
+			preg_replace('/"(\\.|[^"\\\\])*"/', '', $value));
 	}
 
 	/**
