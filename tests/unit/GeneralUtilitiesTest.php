@@ -17,6 +17,9 @@ class GeneralUtilitiesTest extends \Codeception\TestCase\Test
     }
 
     // tests
+    /**
+     *
+     */
     public function testString()
     {
 		$u = \lillockey\Utilities\App\InstanceHolder::util();
@@ -64,7 +67,9 @@ class GeneralUtilitiesTest extends \Codeception\TestCase\Test
 		$this->assertEquals("123456##", $u->mask_string($smask, '#', 2, LILLOCKEY_GENERAL_UTILITIES__MASK_TYPE__LAST), "Mask string - last 2 (#)");
 		$this->assertEquals($smask, $u->mask_string($smask, '*', 1, 9001), "Mask string - invalid type");
 
-
+        $o = new \lillockey\Utilities\App\Access\ObjectAccess\AccessibleObject();
+        $o->set('bob', 'dole');
+        $this->assertEquals('dole', $o['bob'], 'Accessible object');
 	}
 
 	public function testUrl()

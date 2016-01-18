@@ -8,7 +8,6 @@
 
 namespace lillockey\Utilities\App\Access\ObjectAccess;
 
-
 use lillockey\Utilities\App\Access\ObjectAccessible;
 
 class AccessibleObject implements ObjectAccessible
@@ -40,67 +39,6 @@ class AccessibleObject implements ObjectAccessible
 			$this->ob->$key = $value;
 	}
 
-
-
-
-
-
-	/**
-	 * is utilized for reading data from inaccessible members.
-	 *
-	 * @param $name string
-	 * @return mixed
-	 * @link http://php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.members
-	 */
-	function __get($name)
-	{
-		if($this->__isset($name)){
-			return $this->ob->$name;
-		}else{
-			return null;
-		}
-	}
-
-	/**
-	 * run when writing data to inaccessible members.
-	 *
-	 * @param $name  string
-	 * @param $value mixed
-	 * @return void
-	 * @link http://php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.members
-	 */
-	function __set($name, $value)
-	{
-		if($this->is_magical){
-			$this->ob->$name = $value;
-		}
-	}
-
-	/**
-	 * is triggered by calling isset() or empty() on inaccessible members.
-	 *
-	 * @param $name string
-	 * @return bool
-	 * @link http://php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.members
-	 */
-	function __isset($name)
-	{
-		return isset($this->ob->$name);
-	}
-
-	/**
-	 * is invoked when unset() is used on inaccessible members.
-	 *
-	 * @param $name string
-	 * @return void
-	 * @link http://php.net/manual/en/language.oop5.overloading.php#language.oop5.overloading.members
-	 */
-	function __unset($name)
-	{
-		if($this->__isset($name))
-			unset($this->ob->$name);
-	}
-
 	/**
 	 * The __toString method allows a class to decide how it will react when it is converted to a string.
 	 *
@@ -120,8 +58,8 @@ class AccessibleObject implements ObjectAccessible
 	 */
 	public function set($key, $value)
 	{
-		$this->__set($key, $value);
-		return $this;
+		$this->ob->$key = $value;
+        return $this;
 	}
 
 	/**
@@ -131,8 +69,8 @@ class AccessibleObject implements ObjectAccessible
 	 */
 	public function un_set($key)
 	{
-		$this->__unset($key);
-		return $this;
+        unset($this->ob->$key);
+        return $this;
 	}
 
 	/**
@@ -181,7 +119,7 @@ class AccessibleObject implements ObjectAccessible
 	 */
 	public function kexists($key)
 	{
-		return $this->__isset($key);
+		return isset($this->ob->$key);
 	}
 
 	/**
@@ -192,7 +130,9 @@ class AccessibleObject implements ObjectAccessible
 	 */
 	public function raw($key)
 	{
-		return $this->__get($key);
+		if($this->kexists($key))
+            return $this->ob->$key;
+        return null;
 	}
 
 	/**
@@ -262,9 +202,9 @@ class AccessibleObject implements ObjectAccessible
 	public function v_array($key)
 	{
 		$raw = $this->raw($key);
-		if($raw === null) return null;
-		if(!is_array($raw)) return null;
-		return (array) $raw;
+		if($raw === null) return $value = null;
+		if(!is_array($raw)) return $value = null;
+		return $value = (array) $raw;
 	}
 
 	/**
@@ -306,7 +246,16 @@ class AccessibleObject implements ObjectAccessible
 	{
 		$unser = unserialize($serialized);
 		if($unser != null){
-			$this->ob = $unser;
+            if(is_object($unser)){
+                $this->ob = $unser;
+            }elseif(is_array($unser)){
+                $o = new \stdClass();
+                foreach($unser as $key => $value){
+                    $o->$key = $value;
+                }
+                $this->ob = $o;
+            }
+
 		}
 	}
 
@@ -317,12 +266,12 @@ class AccessibleObject implements ObjectAccessible
 
 	public function offsetExists($offset)
 	{
-		return $this->__isset($offset);
+		return $this->kexists($offset);
 	}
 
 	public function offsetGet($offset)
 	{
-		return $this->raw($offset);
+		return $val = $this->raw($offset);
 	}
 
 	public function offsetSet($offset, $value)
@@ -334,4 +283,34 @@ class AccessibleObject implements ObjectAccessible
 	{
 		$this->un_set($offset);
 	}
+
+    public function __get($name)
+    {
+        return $this->raw($name);
+    }
+
+    public function __set($name, $value)
+    {
+        $this->set($name, $value);
+    }
+
+    public function __isset($name)
+    {
+        return $this->kexists($name);
+    }
+
+    public function __unset($name)
+    {
+        return $this->un_set($name);
+    }
+
+    public function count()
+    {
+        return count($this->__toArray());
+    }
+
+    public function toArray()
+    {
+        $this->__toArray();
+    }
 }

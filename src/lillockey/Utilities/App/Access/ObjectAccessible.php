@@ -9,7 +9,7 @@
 namespace lillockey\Utilities\App\Access;
 
 
-interface ObjectAccessible extends \IteratorAggregate, \ArrayAccess, \JsonSerializable, \Serializable
+interface ObjectAccessible extends \IteratorAggregate, \ArrayAccess, \JsonSerializable, \Countable
 {
 	//////////////////////////////////////////////
 	// Internal Access
@@ -145,11 +145,13 @@ interface ObjectAccessible extends \IteratorAggregate, \ArrayAccess, \JsonSerial
 	//////////////////////////////////////////////
 	public function getIterator();
 
-	//////////////////////////////////////////////
-	// Array access
-	//////////////////////////////////////////////
-	public function offsetExists($offset);
-	public function offsetGet($offset);
-	public function offsetSet($offset, $value);
-	public function offsetUnset($offset);
+    //////////////////////////////////////////////
+    // Count
+    //////////////////////////////////////////////
+    public function count();
+
+    //////////////////////////////////////////////
+    // Special
+    //////////////////////////////////////////////
+    public function toArray();
 }

@@ -9,17 +9,15 @@
 namespace lillockey\Utilities\App\Access\ArrayAccess;
 
 
+use lillockey\Utilities\App\Access\ObjectAccess\AccessibleObject;
 use lillockey\Utilities\App\Access\ObjectAccessible;
 use lillockey\Utilities\App\InstanceHolder;
-use Traversable;
 
-class AccessibleArray implements ObjectAccessible
+class AccessibleArray extends \ArrayObject implements ObjectAccessible
 {
-	private $array;
-
 	public function __construct(array &$array = array())
 	{
-		$this->array = $array;
+        parent::__construct($array, \ArrayObject::ARRAY_AS_PROPS);
 	}
 
     /**
@@ -31,7 +29,7 @@ class AccessibleArray implements ObjectAccessible
      */
     public function slice($offset, $length = null, $preserve_keys = null)
     {
-        $ar = array_slice($this->array, $offset, $length, $preserve_keys);
+        $ar = array_slice($this->getArrayCopy(), $offset, $length, $preserve_keys);
         return new AccessibleArray($ar);
     }
 
@@ -43,10 +41,12 @@ class AccessibleArray implements ObjectAccessible
      */
     public function sort($reversed = false)
     {
-        if($reversed)
-            return rsort($this->array);
+        $ar = (array) $this;
 
-        return sort($this->array);
+        if($reversed)
+            return rsort($ar);
+
+        return sort($ar);
     }
 
     /**
@@ -57,10 +57,12 @@ class AccessibleArray implements ObjectAccessible
      */
     public function ksort($reversed = false)
     {
-        if($reversed)
-            return krsort($this->array);
+        $ar = (array) $this;
 
-        return ksort($this->array);
+        if($reversed)
+            return krsort($ar);
+
+        return ksort($ar);
     }
 
     /**
@@ -70,7 +72,9 @@ class AccessibleArray implements ObjectAccessible
      */
     public function usort($function)
     {
-        return usort($this->array, $function);
+        $ar = (array) $this;
+
+        return usort($ar, $function);
     }
 
     /**
@@ -79,7 +83,7 @@ class AccessibleArray implements ObjectAccessible
      */
     public function size()
     {
-        return sizeof($this->array);
+        return sizeof($this->count());
     }
 
     /**
@@ -98,7 +102,8 @@ class AccessibleArray implements ObjectAccessible
      */
     public function push($value)
     {
-        return array_push($this->array, $value);
+        $ar = (array) $this;
+        return array_push($ar, $value);
     }
 
     /**
@@ -108,8 +113,7 @@ class AccessibleArray implements ObjectAccessible
      */
     public function set($key, $value)
     {
-        if($key === null) return $this;
-        $this->array[$key] = $value;
+        $this[$key] = $value;
         return $this;
     }
 
@@ -120,7 +124,7 @@ class AccessibleArray implements ObjectAccessible
      */
     public function un_set($key)
     {
-        unset($this->array[$key]);
+        unset($this[$key]);
         return $this;
     }
 
@@ -133,7 +137,8 @@ class AccessibleArray implements ObjectAccessible
      */
     public function keys($searched_value = null, $strict = null)
     {
-        return array_keys($this->array, $searched_value, $strict);
+        $ar = (array) $this;
+        return array_keys($ar, $searched_value, $strict);
     }
 
     /**
@@ -141,7 +146,8 @@ class AccessibleArray implements ObjectAccessible
      */
     public function values()
     {
-        return array_values($this->array);
+        $ar = (array) $this;
+        return array_values($ar);
     }
 
     /**
@@ -153,7 +159,8 @@ class AccessibleArray implements ObjectAccessible
      */
     public function exists($value, $strict = null)
     {
-        return array_search($value, $this->array, $strict);
+        $ar = (array) $this;
+        return array_search($value, $ar, $strict);
     }
 
     /**
@@ -165,7 +172,8 @@ class AccessibleArray implements ObjectAccessible
     public function kexists($key)
     {
         if($key !== null) return null;
-        return array_key_exists($key, $this->array);
+        $ar = (array) $this;
+        return array_key_exists($key, $ar);
     }
 
     /**
@@ -176,8 +184,14 @@ class AccessibleArray implements ObjectAccessible
 	public function raw($key)
 	{
 		$util = InstanceHolder::util();
-        if($key === null) return null;
-		return $util->getArrayValue($this->array, $key);
+        if($key === null) {
+            $val = null;
+        }
+		else {
+            $ar = (array) $this;
+            $val = $util->getArrayValue($ar, $key);
+        }
+        return $val;
 	}
 
     /**
@@ -255,110 +269,46 @@ class AccessibleArray implements ObjectAccessible
     /**
      * @return array
      */
-	public function __toArray()
+	public function &__toArray()
 	{
-		return $this->array;
-	}
-
-
-	/**
-	 * (PHP 5 &gt;= 5.0.0)<br/>
-	 * Retrieve an external iterator
-	 *
-	 * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
-	 * @return Traversable An instance of an object implementing <b>Iterator</b> or
-	 *       <b>Traversable</b>
-	 */
-	public function getIterator()
-	{
-		return new \ArrayIterator($this->array);
-	}
-
-	/**
-	 * (PHP 5 &gt;= 5.0.0)<br/>
-	 * Whether a offset exists
-	 *
-	 * @link http://php.net/manual/en/arrayaccess.offsetexists.php
-	 * @param mixed $offset <p>
-	 *                      An offset to check for.
-	 *                      </p>
-	 * @return boolean true on success or false on failure.
-	 *                      </p>
-	 *                      <p>
-	 *                      The return value will be casted to boolean if non-boolean was returned.
-	 */
-	public function offsetExists($offset)
-	{
-		return $this->exists($offset);
-	}
-
-	/**
-	 * (PHP 5 &gt;= 5.0.0)<br/>
-	 * Offset to retrieve
-	 *
-	 * @link http://php.net/manual/en/arrayaccess.offsetget.php
-	 * @param mixed $offset <p>
-	 *                      The offset to retrieve.
-	 *                      </p>
-	 * @return mixed Can return all value types.
-	 */
-	public function offsetGet($offset)
-	{
-		$this->raw($offset);
-	}
-
-	/**
-	 * (PHP 5 &gt;= 5.0.0)<br/>
-	 * Offset to set
-	 *
-	 * @link http://php.net/manual/en/arrayaccess.offsetset.php
-	 * @param mixed $offset <p>
-	 *                      The offset to assign the value to.
-	 *                      </p>
-	 * @param mixed $value  <p>
-	 *                      The value to set.
-	 *                      </p>
-	 * @return void
-	 */
-	public function offsetSet($offset, $value)
-	{
-		$this->set($offset, $value);
-	}
-
-	/**
-	 * (PHP 5 &gt;= 5.0.0)<br/>
-	 * Offset to unset
-	 *
-	 * @link http://php.net/manual/en/arrayaccess.offsetunset.php
-	 * @param mixed $offset <p>
-	 *                      The offset to unset.
-	 *                      </p>
-	 * @return void
-	 */
-	public function offsetUnset($offset)
-	{
-		$this->un_set($offset);
+		return (array) $this;
 	}
 
 	public function __toObject()
 	{
-		return (object) $this->array;
+		$ob = new AccessibleObject();
+        foreach($this as $key => $value){
+            $ob->set($key, $value);
+        }
+        return $ob;
 	}
 
 	public function jsonSerialize()
 	{
-		return json_encode($this->array);
+        $ar = (array) $this;
+		return json_encode($ar);
 	}
 
 	public function serialize()
 	{
-		return serialize($this->array);
+        $ar = (array) $this;
+		return serialize($ar);
 	}
 
 	public function unserialize($serialized)
 	{
 		$unser = unserialize($serialized);
-		if(is_array($unser)) $this->array = $unser;
-		$this->array = (array) $unser;
+		if(is_array($unser)){
+            $this->exchangeArray($unser);
+        }elseif($unser instanceof AccessibleArray){
+            foreach($unser as $key=>$value){
+                $this->set($key, $value);
+            }
+        }
 	}
+
+    public function toArray()
+    {
+        return $this->__toArray();
+    }
 }
