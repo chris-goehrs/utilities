@@ -8,6 +8,10 @@
 
 namespace lillockey\Utilities\App;
 
+use lillockey\Utilities\App\Access\ArrayAccess\GetArray;
+use lillockey\Utilities\App\Access\ArrayAccess\PostArray;
+use lillockey\Utilities\App\Access\ArrayAccess\RequestArray;
+use lillockey\Utilities\App\Access\ArrayAccess\ServerArray;
 use lillockey\Utilities\App\Log\File_Logger;
 use lillockey\Utilities\Config\AbstractCustomConfig;
 
@@ -155,4 +159,52 @@ class InstanceHolder
 	{
 		return extension_loaded('fileinfo');
 	}
+
+    private static $get = null;
+    private static $post = null;
+    private static $request = null;
+    private static $server = null;
+
+    /**
+     * Gets/instantiates an instance of the $_GET array as an AccessibleArray
+     * @return GetArray
+     */
+    public static function get()
+    {
+        if(self::$get == null) self::$get = new GetArray();
+        return self::$get;
+    }
+
+
+
+    /**
+     * Gets/instantiates an instance of the $_POST array as an AccessibleArray
+     * @return PostArray
+     */
+    public static function post()
+    {
+        if(self::$post == null) self::$post = new PostArray();
+        return self::$post;
+    }
+
+    /**
+     * Gets/instantiates an instance of the $_REQUEST array as an AccessibleArray
+     * @return RequestArray
+     */
+    public static function request()
+    {
+        if(self::$request == null) self::$request = new RequestArray();
+        return self::$request;
+    }
+
+
+    /**
+     * Gets/instantiates an instance of the $_SERVER array as an AccessibleArray
+     * @return ServerArray
+     */
+    public static function server()
+    {
+        if(self::$server == null) self::$server = new ServerArray();
+        return self::$server;
+    }
 }
