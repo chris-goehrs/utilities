@@ -9,9 +9,10 @@
 namespace lillockey\Utilities\App\Access\ObjectAccess;
 
 
+use lillockey\Utilities\App\Access\Helpers\JsonErrorReportable;
 use lillockey\Utilities\App\InstanceHolder;
 
-class JsonObject extends AccessibleObject
+class JsonObject extends AccessibleObject implements JsonErrorReportable
 {
 	private $json_error = null;
 	private $json_error_msg = null;
