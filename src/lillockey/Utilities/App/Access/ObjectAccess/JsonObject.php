@@ -21,11 +21,11 @@ class JsonObject extends AccessibleObject implements JsonErrorReportable
 	{
 		$util = InstanceHolder::util();
 		if($util->is_json($json)) {
-			parent::__construct(json_decode($json));
+			parent::__construct($std = json_decode($json));
 			$this->json_error = json_last_error();
 			$this->json_error_msg = json_last_error_msg();
 		} else {
-			parent::__construct(new \stdClass());
+			parent::__construct($std = new \stdClass());
 		}
 	}
 
