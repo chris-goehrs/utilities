@@ -260,6 +260,17 @@ class InstanceHolder
 		return $ar->string($key);
 	}
 
+	/**
+	 * Fetches a copy of the currently stored strings.<br/>
+	 * <strong>This is <em>not</em> a reference.
+	 * @return AccessibleArray
+	 */
+	public static function strings()
+	{
+		$ar = self::_fetch_strings_array();
+		return new AccessibleArray($ar->getArrayCopy());
+	}
+
 
 
 
