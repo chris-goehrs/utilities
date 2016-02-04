@@ -14,6 +14,7 @@ use lillockey\Utilities\App\Access\ArrayAccess\PostArray;
 use lillockey\Utilities\App\Access\ArrayAccess\RequestArray;
 use lillockey\Utilities\App\Access\ArrayAccess\ServerArray;
 use lillockey\Utilities\App\Access\ObjectAccessible;
+use lillockey\Utilities\App\Helper\StringAccess;
 use lillockey\Utilities\App\Log\File_Logger;
 use lillockey\Utilities\Config\AbstractCustomConfig;
 
@@ -261,14 +262,15 @@ class InstanceHolder
 	}
 
 	/**
-	 * Fetches a copy of the currently stored strings.<br/>
-	 * <strong>This is <em>not</em> a reference.
-	 * @return AccessibleArray
+	 * Instance accessible strings
+	 * @var StringAccess
 	 */
-	public static function strings()
+	private static $string_accessor = null;
+	public static function &strings()
 	{
-		$ar = self::_fetch_strings_array();
-		return new AccessibleArray($ar->getArrayCopy());
+		if(self::$string_accessor == null)
+			self::$string_accessor = new StringAccess();
+		return self::$string_accessor;
 	}
 
 
