@@ -266,7 +266,7 @@ class InstanceHolder
 	 * @var StringAccess
 	 */
 	private static $string_accessor = null;
-	public static function &strings()
+	public static function strings()
 	{
 		if(self::$string_accessor == null)
 			self::$string_accessor = new StringAccess();
