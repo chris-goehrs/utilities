@@ -8,10 +8,12 @@
 
 namespace lillockey\Utilities\App;
 
+use lillockey\Utilities\App\Access\ArrayAccess\AccessibleArray;
 use lillockey\Utilities\App\Access\ArrayAccess\GetArray;
 use lillockey\Utilities\App\Access\ArrayAccess\PostArray;
 use lillockey\Utilities\App\Access\ArrayAccess\RequestArray;
 use lillockey\Utilities\App\Access\ArrayAccess\ServerArray;
+use lillockey\Utilities\App\Access\ObjectAccessible;
 use lillockey\Utilities\App\Log\File_Logger;
 use lillockey\Utilities\Config\AbstractCustomConfig;
 
@@ -207,4 +209,60 @@ class InstanceHolder
         if(self::$server == null) self::$server = new ServerArray();
         return self::$server;
     }
+
+	///////////////////////////////////////////////////////////////
+	// Strings - For handling translation and other managed messages
+	///////////////////////////////////////////////////////////////
+
+	private static $strings;
+
+	private static function &_fetch_strings_array()
+	{
+		if(self::$strings == null){
+			self::$strings = new AccessibleArray();
+		}
+		return self::$strings;
+	}
+
+	public static function strings_addStrings(ObjectAccessible $accessible)
+	{
+		if($accessible == null) return false;
+
+		$util = self::util();
+		$added = 0;
+		$ignored = 0;
+		$ar = self::_fetch_strings_array();
+		foreach($accessible as $key => $value) {
+			if($util->is_str($value) && ($util->is_str($key) || is_numeric($key))){
+				$ar[$key] = $value;
+				$added++;
+			}else{
+				$ignored++;
+			}
+		}
+		return $added;
+	}
+
+	public static function strings_addString($key, $value)
+	{
+		$util = self::util();
+		if(($util->is_str($key) || is_numeric($key)) && $util->is_str($value)){
+			$ar = self::_fetch_strings_array();
+			$ar[$key] = $value;
+			return true;
+		}
+		return false;
+	}
+
+	public static function string($key)
+	{
+		$ar = self::_fetch_strings_array();
+		return $ar->string($key);
+	}
+
+
+
+
+
+
 }
