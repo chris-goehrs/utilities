@@ -183,14 +183,25 @@ class AccessibleObject implements ObjectAccessible
 
 	/**
 	 * Retrieve the value as a string
-	 * @param $key
+	 *
+	 * @param string $key
+	 * @param bool 	 $trimmed
+	 * @param bool   $scrubbed
 	 * @return null|string
 	 */
-	public function string($key)
+	public function string($key, $trimmed = false, $scrubbed = false)
 	{
 		$raw = $this->raw($key);
 		if($raw === null) return null;
-		return strval($raw);
+
+		$trimmed = $trimmed ? true : false;
+		$scrubbed = $scrubbed ? true : false;
+		$str = strval($raw);
+
+		if($trimmed) $str = trim($str);
+		if($scrubbed) $str = htmlentities($str, ENT_QUOTES);
+
+		return $str;
 	}
 
 

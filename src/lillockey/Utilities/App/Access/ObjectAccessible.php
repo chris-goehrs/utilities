@@ -96,10 +96,13 @@ interface ObjectAccessible extends \IteratorAggregate, \ArrayAccess, \JsonSerial
 
 	/**
 	 * Retrieve the value as a string
-	 * @param $key
+	 *
+	 * @param string $key
+	 * @param bool 	 $trimmed
+	 * @param bool   $scrubbed
 	 * @return null|string
 	 */
-	public function string($key);
+	public function string($key, $trimmed = false, $scrubbed = false);
 
 	/**
 	 * Retrieve the value as an array
