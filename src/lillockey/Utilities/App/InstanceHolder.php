@@ -13,6 +13,7 @@ use lillockey\Utilities\App\Access\ArrayAccess\GetArray;
 use lillockey\Utilities\App\Access\ArrayAccess\PostArray;
 use lillockey\Utilities\App\Access\ArrayAccess\RequestArray;
 use lillockey\Utilities\App\Access\ArrayAccess\ServerArray;
+use lillockey\Utilities\App\Access\ArrayAccess\SessionArray;
 use lillockey\Utilities\App\Access\ObjectAccessible;
 use lillockey\Utilities\App\Helper\StringAccess;
 use lillockey\Utilities\App\Log\File_Logger;
@@ -167,6 +168,7 @@ class InstanceHolder
     private static $post = null;
     private static $request = null;
     private static $server = null;
+	private static $session = null;
 
     /**
      * Gets/instantiates an instance of the $_GET array as an AccessibleArray
@@ -210,6 +212,17 @@ class InstanceHolder
         if(self::$server == null) self::$server = new ServerArray();
         return self::$server;
     }
+
+	/**
+	 * Gets/instantiates an instance of the $_SESSION array as an AccessibleArray
+	 * <strong>Note:</strong>Attempts to start a session if $_SESSION isn't set or isn't an array
+	 * @return SessionArray
+	 */
+	public static function session()
+	{
+		if(self::$session == null) self::$session = new SessionArray();
+		return self::$session;
+	}
 
 	///////////////////////////////////////////////////////////////
 	// Strings - For handling translation and other managed messages
