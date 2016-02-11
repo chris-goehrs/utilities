@@ -13,6 +13,9 @@
 		"php": ">=5.5.0",
 	  	"ext-curl": "*"
 	},
+    "suggest": {
+        "php-curl-class/php-curl-class": "Makes working with cURL much easier"
+    },
 	"autoload": {
 		"psr-0": {
 			"lillockey": "src/"
