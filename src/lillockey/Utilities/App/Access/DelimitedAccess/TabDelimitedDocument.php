@@ -9,7 +9,7 @@
 namespace lillockey\Utilities\App\Access\DelimitedAccess;
 
 
-class TabDelimitedDocument extends DelimitedDocument
+class TabDelimitedDocument extends DelimitedDocument implements DelimitedFetchable
 {
     public function __construct($tab_delimited_text, $first_row_headers = true)
     {
@@ -38,5 +38,28 @@ class TabDelimitedDocument extends DelimitedDocument
         }
 
         parent::__construct($data_rows, $header_keys);
+    }
+
+    /**
+     * Used to retrieve the text associated with this document
+     * @return string
+     */
+    public function fetch()
+    {
+        $str = '';
+        $first = true;
+
+        foreach($this->get_full_array() as $row){
+            $row_text = implode("\t", $row);
+
+            if($first){
+                $first = false;
+                $str = $row_text;
+            }else{
+                $str .= "\n$row_text";
+            }
+        }
+
+        return $str;
     }
 }
