@@ -671,6 +671,11 @@ class DB extends AbstractUtility
 		return $this->run_raw_query_and_return_query_status($query, $submitted_fields);
 	}
 
+    /**
+     * @param $table
+     * @param array $where
+     * @return bool|int
+     */
 	public function delete($table, array $where)
 	{
 		$table = $this->config->table($table);
@@ -681,7 +686,10 @@ class DB extends AbstractUtility
 		$wherear = $this->build_where($where);
 
 		$query = "DELETE FROM `$table` {$wherear['query']}";
-		return $this->run_raw_query_and_return_query_status($query, $wherear['array']);
+        $r = $this->execute_query($query, $wherear['array']);
+
+        if(!$r->exec()) return false;
+        return $r->statement()->rowCount();
 	}
 
 	/**
@@ -689,7 +697,7 @@ class DB extends AbstractUtility
 	 * @param string $table
 	 * @param string $id_field
 	 * @param string $id_value
-	 * @return boolean
+	 * @return int
 	 */
 	public function delete_by($table, $id_field, $id_value)
 	{
