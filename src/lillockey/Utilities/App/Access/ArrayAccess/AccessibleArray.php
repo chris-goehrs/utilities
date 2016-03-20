@@ -15,7 +15,7 @@ use lillockey\Utilities\App\InstanceHolder;
 
 class AccessibleArray extends \ArrayObject implements ObjectAccessible
 {
-	public function __construct(array &$array = array())
+	public function __construct(array $array = array())
 	{
         parent::__construct($array, \ArrayObject::ARRAY_AS_PROPS);
 	}
@@ -280,7 +280,7 @@ class AccessibleArray extends \ArrayObject implements ObjectAccessible
     /**
      * @return array
      */
-	public function &__toArray()
+	public function __toArray()
 	{
 		return (array) $this;
 	}

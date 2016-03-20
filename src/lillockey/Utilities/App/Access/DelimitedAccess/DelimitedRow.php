@@ -171,7 +171,7 @@ class DelimitedRow extends AccessibleArray
     /**
      * @return array
      */
-    public function &__toArray()
+    public function __toArray()
     {
         $ar = array();
         //This will make it ignore any special columns assigned
