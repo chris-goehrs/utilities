@@ -32,17 +32,19 @@ class ServerArray extends AccessibleArray
 	// Helpers
 	///////////////////////////////////////////////////////////////////////
 
-	/**
-	 * Special check for the host.  This checks against multiple values including:<ul>
-	 * <li>HTTP_HOST</li>
-	 * <li>SERVER_NAME</li>
-	 * <li>SERVER_ADDR</li></ul>
-	 * @return null|string
-	 */
-	public function getHost()
-	{
-		return $this->string(array('HTTP_HOST', 'SERVER_NAME', 'SERVER_ADDR'));
-	}
+    /**
+     * Special check for the host.  This checks against multiple values including:<ul>
+     * <li>HTTP_HOST</li>
+     * <li>SERVER_NAME</li>
+     * <li>SERVER_ADDR</li></ul>
+     * @return null|string
+     */
+    public function getHost()
+    {
+        $raw_host = $this->string(array('HTTP_HOST', 'SERVER_NAME', 'SERVER_ADDR'));
+        $split_host = explode(':', $raw_host);
+        return $split_host[0];
+    }
 
 	/**
 	 * @return bool

@@ -61,7 +61,8 @@ class InstanceHolder
 		if(array_key_exists($name, self::$configs))
 			return self::$configs[$name];
 
-		return null;
+        $nullval = null;
+		return $nullval;
 	}
 
 	/**
