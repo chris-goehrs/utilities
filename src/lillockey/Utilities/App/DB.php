@@ -523,7 +523,7 @@ class DB extends AbstractUtility
 		foreach($fields as $column=>$value)
 		{
 			if($this->field_name_is_valid($column) === false) {continue;}
-			if(empty($value)) continue;
+			//if(empty($value)) continue;
 
 			if(InstanceHolder::util()->str_left_is($value, '#__')){
 				$function_to_use = substr($value, 3, strlen($value) - 3);
