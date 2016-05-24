@@ -10,6 +10,7 @@ namespace lillockey\Utilities\App;
 
 use lillockey\Utilities\App\Access\ArrayAccess\AccessibleArray;
 use lillockey\Utilities\App\Access\ArrayAccess\GetArray;
+use lillockey\Utilities\App\Access\ArrayAccess\HeaderArray;
 use lillockey\Utilities\App\Access\ArrayAccess\PostArray;
 use lillockey\Utilities\App\Access\ArrayAccess\RequestArray;
 use lillockey\Utilities\App\Access\ArrayAccess\ServerArray;
@@ -170,6 +171,7 @@ class InstanceHolder
     private static $request = null;
     private static $server = null;
 	private static $session = null;
+    private static $headers = null;
 
     /**
      * Gets/instantiates an instance of the $_GET array as an AccessibleArray
@@ -224,6 +226,18 @@ class InstanceHolder
 		if(self::$session == null) self::$session = new SessionArray();
 		return self::$session;
 	}
+
+    /**
+     * Uses the php function "getallheaders()" to fetch all of the headers and build
+     * an accessible array.
+     * @return HeaderArray
+     */
+    public static function headers()
+    {
+        if(self::$headers == null) self::$headers = new HeaderArray();
+        return self::$headers;
+    }
+
 
 	///////////////////////////////////////////////////////////////
 	// Strings - For handling translation and other managed messages
@@ -286,6 +300,8 @@ class InstanceHolder
 			self::$string_accessor = new StringAccess();
 		return self::$string_accessor;
 	}
+
+
 
 
 
