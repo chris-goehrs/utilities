@@ -118,17 +118,18 @@ class DB extends AbstractUtility
 
 	/**
 	 * Runs a raw SQL query
-	 * @param string $query - SQL Query
+	 *
+*@param string $query - SQL Query
 	 * @param array $arguments - [optional] array containing arguments for the query
 	 * @param int $pdo_fetch_style - [optional] pdo fetch style \PDO::FETCH_OBJ by default
-	 * @param string $pdo_fetch_class_name - [optional] the class name (used only when PDO::FETCH_CLASS is used for $pdo_fetch_style
+	 * @param string $pdo_fetch_class_name_or_column - [optional] the class name (used only when PDO::FETCH_CLASS is used for $pdo_fetch_style OR the column number for FETCH_COLUMN
 	 * @return array - the records found
 	 */
-	public function run_raw_query_and_return_all_records($query, array $arguments = null, $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class_name = '\\stdClass')
+	public function run_raw_query_and_return_all_records($query, array $arguments = null, $pdo_fetch_style = \PDO::FETCH_OBJ, $pdo_fetch_class_name_or_column = '\\stdClass')
 	{
 		$statement = $this->run_raw_query_and_return_statement($query, $arguments);
-		if($pdo_fetch_style == \PDO::FETCH_CLASS){
-			$statement->setFetchMode($pdo_fetch_style, $pdo_fetch_class_name);
+		if($pdo_fetch_style == \PDO::FETCH_CLASS || $pdo_fetch_style == \PDO::FETCH_COLUMN){
+			$statement->setFetchMode($pdo_fetch_style, $pdo_fetch_class_name_or_column);
 			return $statement->fetchAll();
 		}else{
 			return $statement->fetchAll($pdo_fetch_style);
@@ -522,7 +523,7 @@ class DB extends AbstractUtility
 		foreach($fields as $column=>$value)
 		{
 			if($this->field_name_is_valid($column) === false) {continue;}
-			if(empty($value)) continue;
+			if($value === null) continue;
 
 			if(InstanceHolder::util()->str_left_is($value, '#__')){
 				$function_to_use = substr($value, 3, strlen($value) - 3);
