@@ -16,8 +16,8 @@ class HeaderArray extends AccessibleArray
     public function __construct()
     {
         $headers = getallheaders();
-        if(!isset($headers)) throw new NotAnArrayException('$_GET is not a valid array');
-        if(!is_array($headers)) throw new NotAnArrayException('$_GET is not a valid array');
+        if(!isset($headers)) throw new NotAnArrayException('getallheaders() is not a valid array');
+        if(!is_array($headers)) throw new NotAnArrayException('getallheaders() is not a valid array');
         parent::__construct($headers);
     }
 }
