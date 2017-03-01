@@ -160,7 +160,7 @@ class AccessibleArray extends \ArrayObject implements ObjectAccessible
     public function exists($value, $strict = null)
     {
         $ar = (array) $this;
-        return array_search($value, $ar, $strict);
+        return in_array($value, $ar, $strict);
     }
 
     /**
