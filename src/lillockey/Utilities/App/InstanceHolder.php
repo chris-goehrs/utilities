@@ -34,6 +34,7 @@ class InstanceHolder
 {
 	private static $configs = array();
 	private static $db_instances = array();
+	private static $dbt_instances = array();
 	private static $util_instance = null;
 	private static $log_instances = array();
 	private static $locality_insances = array();
@@ -97,6 +98,22 @@ class InstanceHolder
 			return null;
 		}
 	}
+
+	public static function dbt($name = null)
+    {
+        if(!self::pdo_enabled()) return null;
+        if($name == null) $name = INSTANCE_HOLDER__DEFAULT_CONFIGURATION_NAME;
+
+        if(array_key_exists($name, self::$db_instances)){
+            return self::$dbt_instances[$name];
+        }
+
+        if($config = self::config($name)){
+            return self::$dbt_instances[$name] = new DBT($config, $name);
+        }else{
+            return null;
+        }
+    }
 
 	/**
 	 * Gets the named instance of the Utilities class
