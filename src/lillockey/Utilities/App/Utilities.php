@@ -169,6 +169,7 @@ class Utilities
 	 * <p>
 	 * <strong>NOTE</strong>:
 	 * This is based on the answer found <a href="http://stackoverflow.com/questions/6041741/fastest-way-to-check-if-a-string-is-json-in-php">here</a>
+     * The results are not infallible.  False negatives have popped up every once in a while.
 	 * </p>
 	 *
 	 * @param $value

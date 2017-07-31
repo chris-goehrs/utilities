@@ -14,30 +14,45 @@ use lillockey\Utilities\App\InstanceHolder;
 
 class JsonObject extends AccessibleObject implements JsonErrorReportable
 {
-	private $json_error = null;
-	private $json_error_msg = null;
+    /**
+     * JSON parsing error
+     * @var int|null $json_error
+     */
+    private $json_error = null;
 
+    /**
+     * JSON parsing error message
+     * @var bool|null|string $json_error_msg
+     */
+    private $json_error_msg = null;
+
+    /**
+     * JsonObject constructor.
+     * @param string $json
+     */
 	public function __construct($json)
 	{
-		$util = InstanceHolder::util();
-		if($util->is_json($json)) {
-			$std = json_decode($json);
-			parent::__construct($std);
-			$this->json_error = json_last_error();
-			$this->json_error_msg = json_last_error_msg();
-		} else {
-			$std = new \stdClass();
-			parent::__construct($std);
-		}
+        $std = json_decode($json);
+        parent::__construct($std);
+        $this->json_error = json_last_error();
+        $this->json_error_msg = json_last_error_msg();
 	}
 
-	public function getJsonError()
-	{
-		return $this->json_error;
-	}
+    /**
+     * JSON parsing error
+     * @return int|null
+     */
+    public function getJsonError()
+    {
+        return $this->json_error;
+    }
 
-	public function getJsonErrorMessage()
-	{
-		return $this->json_error_msg;
-	}
+    /**
+     * JSON parsing error message
+     * @return bool|null|string
+     */
+    public function getJsonErrorMessage()
+    {
+        return $this->json_error_msg;
+    }
 }
