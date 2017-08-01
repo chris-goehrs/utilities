@@ -13,4 +13,5 @@ interface Loggable
 	public function get_log_location($absolute = true);
 	public function read_last_x_lines_of_log($number_of_lines = 10);
 	public function write_to_log($line = '');
+	public function write_exception(\Exception $exception);
 }

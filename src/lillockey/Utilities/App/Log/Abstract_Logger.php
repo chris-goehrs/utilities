@@ -50,4 +50,14 @@ abstract class Abstract_Logger extends AbstractUtility implements Loggable
 			$this->write_to_log("    $key_pad => $valuep");
 		}
 	}
+
+    public function write_exception(\Exception $exception)
+    {
+        $this->write_to_log(get_class($exception) . " thrown!");
+        $this->write_to_log("\tCode: {$exception->getCode()}");
+        $this->write_to_log("\tMessage: {$exception->getMessage()}");
+        $this->write_to_log("\tFile: {$exception->getFile()}");
+        $this->write_to_log("\tLine: {$exception->getLine()}");
+        $this->write_to_log("\tStacktrace: \n===========================\n\n{$exception->getTraceAsString()}");
+    }
 }
