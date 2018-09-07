@@ -18,6 +18,7 @@ use lillockey\Utilities\App\Access\ArrayAccess\SessionArray;
 use lillockey\Utilities\App\Access\ObjectAccessible;
 use lillockey\Utilities\App\Helper\StringAccess;
 use lillockey\Utilities\App\Log\File_Logger;
+use lillockey\Utilities\App\Magento2\Magento2Utilities;
 use lillockey\Utilities\Config\AbstractCustomConfig;
 
 define ('INSTANCE_HOLDER__DEFAULT_CONFIGURATION_NAME', sha1(time()));
@@ -39,6 +40,7 @@ class InstanceHolder
 	private static $log_instances = array();
 	private static $locality_insances = array();
 	private static $image_instances = array();
+	private static $m2util_instance = null;
 
 	/**
 	 * Stores an instance of AbstractCustomConfig using the name provided
@@ -78,6 +80,18 @@ class InstanceHolder
 
 		return self::$util_instance;
 	}
+
+    /**
+     * Retrieves an instance of the Magento 2 utilities class
+     * @return Magento2Utilities
+     */
+	public static function m2util()
+    {
+        if(self::$m2util_instance == null)
+            self::$m2util_instance = new Magento2Utilities();
+
+        return self::$m2util_instance;
+    }
 
 	/**
 	 * @param null $name
