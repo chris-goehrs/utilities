@@ -40,7 +40,7 @@ class InstanceHolder
 	private static $log_instances = array();
 	private static $locality_insances = array();
 	private static $image_instances = array();
-	private static $m2util_instance = null;
+	private static $m2util_instances = array();
 
 	/**
 	 * Stores an instance of AbstractCustomConfig using the name provided
@@ -73,7 +73,7 @@ class InstanceHolder
 	 * Retrieves an instance of the utilities class
 	 * @return Utilities
 	 */
-	public static function util()
+	public static function &util()
 	{
 		if(self::$util_instance == null)
 			self::$util_instance = new Utilities();
@@ -83,14 +83,24 @@ class InstanceHolder
 
     /**
      * Retrieves an instance of the Magento 2 utilities class
-     * @return Magento2Utilities
+     * @param string $name [optional] The configuration to use to bring in some magento settings
+     * @return Magento2Utilities|null
      */
-	public static function m2util()
+	public static function &m2util($name = null)
     {
-        if(self::$m2util_instance == null)
-            self::$m2util_instance = new Magento2Utilities();
+        if(!self::pdo_enabled()) return null;
+        if($name == null) $name = INSTANCE_HOLDER__DEFAULT_CONFIGURATION_NAME;
 
-        return self::$m2util_instance;
+        if(array_key_exists($name, self::$m2util_instances)){
+            return self::$m2util_instances[$name];
+        }
+
+        if(self::config($name)){
+            return self::$m2util_instances[$name] = new Magento2Utilities($name);
+        }else{
+            $nullval = null;
+            return $nullval;
+        }
     }
 
 	/**
