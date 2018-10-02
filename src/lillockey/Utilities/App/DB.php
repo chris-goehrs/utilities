@@ -542,22 +542,22 @@ class DB extends AbstractUtility
 					$columns .= ", $column";		//Add the column value to the columns list
 					$values .= ", $function_to_use";//Add the premade key to the values list
 				}
-			}else{
+            }else{
 
-				$key = "v$i";						//Make a reusable key
-				$submitted_values[$key] = $value;	//Add the validated column's value into the array to be submitted to the query
+                $key = "v$i";						//Make a reusable key
+                $submitted_values[$key] = $value;	//Add the validated column's value into the array to be submitted to the query
 
-				if($i == 0)
-				{	//If this is the first column/value pair
-					$columns = $column;			//Make the columns value = the column name
-					$values = ":$key";			//Set the value to the premade key
-				}
-				else
-				{	//If this is any subsequent column/value pair, precede both the value and the column with a ','
-					$columns .= ", $column";	//Add the column value to the columns list
-					$values .= ", :$key";		//Add the premade key to the values list
-				}
-			}
+                if($i == 0)
+                {	//If this is the first column/value pair
+                    $columns = "`$column`";			//Make the columns value = the column name
+                    $values = ":$key";			//Set the value to the premade key
+                }
+                else
+                {	//If this is any subsequent column/value pair, precede both the value and the column with a ','
+                    $columns .= ", `$column`";	//Add the column value to the columns list
+                    $values .= ", :$key";		//Add the premade key to the values list
+                }
+            }
 
 			$i++;	//Next
 		}
