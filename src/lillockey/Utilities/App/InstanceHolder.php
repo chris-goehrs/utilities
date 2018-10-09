@@ -88,7 +88,8 @@ class InstanceHolder
      */
 	public static function &m2util($name = null)
     {
-        if(!self::pdo_enabled()) return null;
+        $nullval = null;
+        if(!self::pdo_enabled()) return $nullval;
         if($name == null) $name = INSTANCE_HOLDER__DEFAULT_CONFIGURATION_NAME;
 
         if(array_key_exists($name, self::$m2util_instances)){
@@ -96,9 +97,10 @@ class InstanceHolder
         }
 
         if(self::config($name)){
-            return self::$m2util_instances[$name] = new Magento2Utilities($name);
+            self::$m2util_instances[$name] = new Magento2Utilities($name);
+            return self::$m2util_instances[$name];
         }else{
-            $nullval = null;
+
             return $nullval;
         }
     }
