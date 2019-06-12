@@ -124,7 +124,7 @@ class AccessibleArray extends \ArrayObject implements ObjectAccessible
      */
     public function un_set($key)
     {
-        unset($this[$key]);
+        if(isset($this[$key])) unset($this[$key]);
         return $this;
     }
 
